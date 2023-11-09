@@ -1,8 +1,8 @@
 ---
-title: "Chapter 0 - Getting Started"
+title: "章节零 - 开始"
 weight: 1
 date: 2023-09-11 18:00:00
-description: "Ziglearn - A Guide / Tutorial for the Zig programming language. Install and get started with ziglang here."
+description: "Ziglearn - Zig编程语言的指南/教程。在这里安装并开始使用ziglang。"
 ---
 
 # 欢迎

@@ -5,33 +5,33 @@ date: 2023-09-11 18:00:00
 description: "Ziglearn - A Guide / Tutorial for the Zig programming language. Install and get started with ziglang here."
 ---
 
-# Welcome
+# 欢迎
 
-[Zig](https://ziglang.org) is a general-purpose programming language and toolchain for maintaining __robust__, __optimal__, and __reusable__ software.
+[Zig](https://ziglang.org)是一种通用编程语言和工具链，用于维护 __健壮的__ 、 __最优的__ 和 __可重用__ 的软件。
 
-Warning: Zig is still pre-1.0; usage in production is still not recommended.
+警告：Zig目前未达1.0；不建议在生产环境中使用。
 
-To follow this guide, we assume you have:
-   * Prior experience programming
-   * Some understanding of low-level programming concepts
+要遵循本指南，我们假设你具备：
+   * 有编程经验
+   * 对低级编程概念有一定的了解
 
-Knowing a language like C, C++, Rust, Go, Pascal or similar will help you follow this guide. You must have an editor, terminal and internet connection available to you. This guide is unofficial and unaffiliated with the Zig Software Foundation and is designed to be read in order from the start.
-# Installation
+了解一门语言，比如C、C++、Rust、Go、Pascal或类似的语言，将有助于你掌握本指南。你必须有一个编辑器，终端和互联网连接。本指南是非官方的，与Zig软件基金会无关，旨在从一开始就按顺序阅读。
+# 安装
 
-This guide assumes Zig 0.11, which is the latest major release as of writing.
+本指南假设使用Zig 0.11，这是撰写本文时最新的主要版本。
 
-1.  Download and extract a prebuilt master binary of Zig from:
+1.  下载并提取Zig主分支的预构建二进制版本：
 ```
 https://ziglang.org/download/
 ```
 
-2. Add Zig to your path
+2. 将Zig添加到你的路径中
    - linux, macos, bsd
 
-      Add the location of your Zig binary to your `PATH` environment variable. For an installation, add `export PATH=$PATH:~/zig` or similar to your `/etc/profile` (system-wide) or `$HOME/.profile`. If these changes do not apply immediately, run the line from your shell.
+      将Zig二进制文件的位置添加到`PATH`环境变量中。关于安装，添加`export PATH=$PATH:~/zig`或类似于`/etc/profile`（系统范围）或`$HOME/.profile`。如果这些更改不能立即应用，请从shell运行这行代码。
    - windows
 
-      a) System wide (admin powershell)
+      a) 系统范围（admin powershell）
 
       ```powershell
       [Environment]::SetEnvironmentVariable(
@@ -41,7 +41,7 @@ https://ziglang.org/download/
       )
       ```
 
-      b) User level (powershell)
+      b) 用户级别（powershell）
 
       ```powershell
       [Environment]::SetEnvironmentVariable(
@@ -51,23 +51,23 @@ https://ziglang.org/download/
       )
       ```
 
-      Close your terminal and create a new one.
+      关闭终端并创建一个新终端。
 
-3. Verify your installation with `zig version`. The output should look like this:
+3. 使用`zig version`验证安装。输出应该是这样的：
 ```
 $ zig version
 0.11
 ```
 
-4. (optional, third party) For completions and go-to-definition in your editor, install the Zig Language Server from:
+4. （可选，第三方）对于编辑器中的自动完成和跳转到定义，请从以下路径安装Zig语言服务器：
 ```
 https://github.com/zigtools/zls/
 ```
-5. (optional) Join a [Zig community](https://github.com/ziglang/zig/wiki/Community).
+5. （可选）加入一个[Zig community](https://github.com/ziglang/zig/wiki/Community)。
 
 # Hello World
 
-Create a file called `main.zig`, with the following contents:
+创建一个名为`main.zig`的文件，内容如下：
 
 ```zig
 const std = @import("std");
@@ -76,6 +76,6 @@ pub fn main() void {
     std.debug.print("Hello, {s}!\n", .{"World"});
 }
 ```
-###### (note: make sure your file is using spaces for indentation, LF line endings and UTF-8 encoding!)
+###### （注意：确保你的文件使用空格缩进、LF换行符及以UTF-8编码！）
 
-Use `zig run main.zig` to build and run it. In this example, `Hello, World!` will be written to stderr, and is assumed to never fail.
+使用`zig run main.zig`来构建和运行它。在这个例子中，`Hello, World!` 将被写入stderr，并假定永远不会失败。

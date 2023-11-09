@@ -1,29 +1,29 @@
 ---
-title: "Chapter 1 - Basics"
+title: "章节一 - 基础"
 weight: 2
 date: 2023-09-11 18:00:00
-description: "Chapter 1 - This will get you up to speed with almost all of the Zig programming language. This part of the tutorial should be coverable in under an hour."
+description: "章节一 - 这将使你快速掌握Zig编程语言几乎所有的内容。本教程的这一部分应该可以在一个小时内完成。"
 ---
 
-# Assignment
+# 赋值
 
-Value assignment has the following syntax: `(const|var) identifier[: type] = value`.
+赋值的语法如下：`(const|var) identifier[: type] = value`。
 
-* `const` indicates that `identifier` is a **constant** that stores an immutable value.
-* `var` indicates that `identifier` is a **variable** that stores a mutable value.
-* `: type` is a type annotation for `identifier`, and may be omitted if the data type of `value` can be inferred.
+* `const`表示`identifier`是存储不可变值的**常量**。
+* `var`表示标识符是存储**可变值**的变量。
+* `: type`是`identifier`的类型注释，如果`value`的数据类型可以推断，则可以省略。
 
 <!--no_test-->
 ```zig
-const constant: i32 = 5;  // signed 32-bit constant
-var variable: u32 = 5000; // unsigned 32-bit variable
+const constant: i32 = 5;  // 有符号32位常量
+var variable: u32 = 5000; // 无符号32位变量
 
-// @as performs an explicit type coercion
+// @as执行显式类型强制转换
 const inferred_constant = @as(i32, 5);
 var inferred_variable = @as(u32, 5000);
 ```
 
-Constants and variables *must* have a value. If no known value can be given, the [`undefined`](https://ziglang.org/documentation/master/#undefined) value, which coerces to any type, may be used as long as a type annotation is provided.
+常量和变量*必须*有一个值。如果不能给出已知值，则只要提供了类型注释，就可以使用强制转换为任何类型的[`undefined`](https://ziglang.org/documentation/master/#undefined)值。
 
 <!--no_test-->
 ```zig
@@ -31,13 +31,13 @@ const a: i32 = undefined;
 var b: u32 = undefined;
 ```
 
-Where possible, `const` values are preferred over `var` values.
+在可能的情况下，`const`值优先于`var`值。
 
-# Arrays
+# 数组
 
-Arrays are denoted by `[N]T`, where `N` is the number of elements in the array and `T` is the type of those elements (i.e., the array's child type).
+数组用`[N]T`表示，其中`N`是数组中元素的数量，`T`是这些元素的类型（即数组的子类型）。
 
-For array literals, `N` may be replaced by `_` to infer the size of the array.
+对于数组字面量，可以用`_`代替`N`来推断数组的大小。
 
 <!--no_test-->
 ```zig
@@ -45,7 +45,7 @@ const a = [5]u8{ 'h', 'e', 'l', 'l', 'o' };
 const b = [_]u8{ 'w', 'o', 'r', 'l', 'd' };
 ```
 
-To get the size of an array, simply access the array's `len` field.
+要获取数组的大小，只需访问数组的`len`字段。
 
 <!--no_test-->
 ```zig

@@ -55,9 +55,9 @@ const length = array.len; // 5
 
 # If
 
-Zig's if statements only accept `bool` values (i.e. `true` or `false`). There is no concept of truthy or falsy values.
+Zig的if语句只接受`bool`值（即`true`或`false`）。没有类真值或类假值的概念。
 
-Here, we will introduce testing. Save the below code and compile + run it with `zig test file-name.zig`. We will be using the [`expect`](https://ziglang.org/documentation/master/std/#std;testing.expect) function from the standard library, which will cause the test to fail if it's given the value `false`. When a test fails, the error and stack trace will be shown.
+在这里，我们将介绍测试。保存下面的代码，并使用`zig test file-name.zig`编译并运行它。我们将使用标准库中的[`expect`](https://ziglang.org/documentation/master/std/#std;testing.expect)函数，如果给出的值为`false`，该函数将导致测试失败。当测试失败时，将显示错误和堆栈跟踪。
 
 ```zig
 const expect = @import("std").testing.expect;
@@ -74,7 +74,7 @@ test "if statement" {
 }
 ```
 
-If statements also work as expressions.
+If语句也可以作为表达式使用。
 
 ```zig
 test "if statement expression" {
@@ -87,9 +87,9 @@ test "if statement expression" {
 
 # While
 
-Zig's while loop has three parts - a condition, a block and a continue expression.
+Zig的while循环有三个部分——一个条件、一个块和一个继续表达式。
 
-Without a continue expression.
+没有continue表达式。
 ```zig
 test "while" {
     var i: u8 = 2;
@@ -100,7 +100,7 @@ test "while" {
 }
 ```
 
-With a continue expression.
+带一个continue表达式。
 ```zig
 test "while with continue expression" {
     var sum: u8 = 0;
@@ -112,7 +112,7 @@ test "while with continue expression" {
 }
 ```
 
-With a `continue`.
+带一个`continue`.
 
 ```zig
 test "while with continue" {
@@ -126,7 +126,7 @@ test "while with continue" {
 }
 ```
 
-With a `break`.
+带一个`break`。
 
 ```zig
 test "while with break" {

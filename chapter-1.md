@@ -141,11 +141,11 @@ test "while with break" {
 ```
 
 # For
-For loops are used to iterate over arrays (and other types, to be discussed later). For loops follow this syntax. Like while, for loops can use `break` and `continue`. Here, we've had to assign values to `_`, as Zig does not allow us to have unused values.
+For循环用于遍历数组（以及后面将讨论的其他类型）。For循环遵循这种语法。和while一样，for循环也可以使用`break`和`continue`。这里，我们必须给`_`赋值，因为Zig不允许我们使用未使用的值。
 
 ```zig
 test "for" {
-    //character literals are equivalent to integer literals
+    //字符字面值等同于整数字面值
     const string = [_]u8{ 'a', 'b', 'c' };
 
     for (string, 0..) |character, index| {
@@ -165,9 +165,9 @@ test "for" {
 }
 ```
 
-# Functions
+# 函数
 
-__All function arguments are immutable__ - if a copy is desired the user must explicitly make one. Unlike variables, which are snake_case, functions are camelCase. Here's an example of declaring and calling a simple function.
+__所有函数参数都是不可变的__——如果需要复制，用户必须显式地创建一个。不像变量是snake_case，函数是camelCase。下面是声明和调用一个简单函数的例子。
 
 ```zig
 fn addFive(x: u32) u32 {
@@ -181,7 +181,7 @@ test "function" {
 }
 ```
 
-Recursion is allowed:
+允许递归：
 
 ```zig
 fn fibonacci(n: u16) u16 {
@@ -194,9 +194,9 @@ test "function recursion" {
     try expect(x == 55);
 }
 ```
-When recursion happens, the compiler is no longer able to work out the maximum stack size, which may result in unsafe behaviour - a stack overflow. Details on how to achieve safe recursion will be covered in future.
+当发生递归时，编译器不再能够计算出最大堆栈大小，这可能导致不安全的行为-堆栈溢出。关于如何实现安全递归的细节将在以后讨论。
 
-Values can be ignored using `_` instead of a variable or const declaration. This does not work at the global scope (i.e. it only works inside functions and blocks) and is useful for ignoring the values returned from functions if you do not need them.
+可以使用`_`而不是变量或const声明来忽略值。这在全局范围内不起作用（即它只在函数和块内部起作用），如果你不需要函数返回的值，可以用它可以来忽略。
 
 <!--no_test-->
 ```zig
@@ -205,7 +205,7 @@ _ = 10;
 
 # Defer
 
-Defer is used to execute a statement while exiting the current block.
+Defer用于在退出当前块时执行语句。
 
 ```zig
 test "defer" {
@@ -218,7 +218,7 @@ test "defer" {
 }
 ```
 
-When there are multiple defers in a single block, they are executed in reverse order.
+当一个块中有多个defer时，它们以相反的顺序执行。
 
 ```zig
 test "multi defer" {
@@ -233,7 +233,7 @@ test "multi defer" {
 
 # Errors
 
-An error set is like an enum (details on Zig's enums later), where each error in the set is a value. There are no exceptions in Zig; errors are values. Let's create an error set.
+错误集类似于枚举（稍后详细介绍Zig的枚举），其中集合中的每个错误都是一个值。Zig中没有异常；错误就是值。让我们创建一个错误集。
 
 ```zig
 const FileOpenError = error{
@@ -242,7 +242,7 @@ const FileOpenError = error{
     FileNotFound,
 };
 ```
-Error sets coerce to their supersets.
+错误集强制转换到它们的超集。
 
 ```zig
 const AllocationError = error{OutOfMemory};
@@ -253,9 +253,9 @@ test "coerce error from a subset to a superset" {
 }
 ```
 
-An error set type and another type can be combined with the `!` operator to form an error union type. Values of these types may be an error value or a value of the other type.
+一个错误集类型和另一个类型可以用`!`操作符形成错误联合类型。这些类型的值可以是错误值或其他类型的值。
 
-Let's create a value of an error union type. Here [`catch`](https://ziglang.org/documentation/master/#catch) is used, which is followed by an expression which is evaluated when the value preceding it is an error. The catch here is used to provide a fallback value, but could instead be a [`noreturn`](https://ziglang.org/documentation/master/#noreturn) - the type of `return`, `while (true)` and others.
+让我们创建一个错误联合类型的值。这里使用[`catch`](https://ziglang.org/documentation/master/#catch)，它后面跟着一个表达式，当它前面的值是错误时计算该表达式。这里的catch用于提供回退值，但也可以是[`noreturn`](https://ziglang.org/documentation/master/#noreturn)——`return`、`while (true)`和其他的类型。
 
 ```zig
 test "error union" {
@@ -267,7 +267,7 @@ test "error union" {
 }
 ```
 
-Functions often return error unions. Here's one using a catch, where the `|err|` syntax receives the value of the error. This is called __payload capturing__, and is used similarly in many places. We'll talk about it in more detail later in the chapter. Side note: some languages use similar syntax for lambdas - this is not true for Zig.
+函数经常返回错误联合。下面是一个使用catch的例子，其中`|err|`语法接收错误的值。这被称为 __有效载荷捕获__，在许多地方都有类似的使用。我们将在本章后面更详细地讨论它。旁注：一些语言对lambda使用类似的语法——但这对Zig来说并非如此。
 
 ```zig
 fn failingFunction() error{Oops}!void {
@@ -282,7 +282,7 @@ test "returning an error" {
 }
 ```
 
-`try x` is a shortcut for `x catch |err| return err`, and is commonly used where handling an error isn't appropriate. Zig's [`try`](https://ziglang.org/documentation/master/#try) and [`catch`](https://ziglang.org/documentation/master/#catch) are unrelated to try-catch in other languages.
+`try x`是`x catch |err| return err`的快捷方式，通常用于不适合处理错误的地方。Zig的[`try`](https://ziglang.org/documentation/master/#try)和[`catch`](https://ziglang.org/documentation/master/#catch)与其他语言中的try-catch无关。
 
 ```zig
 fn failFn() error{Oops}!i32 {
@@ -295,11 +295,11 @@ test "try" {
         try expect(err == error.Oops);
         return;
     };
-    try expect(v == 12); // is never reached
+    try expect(v == 12); // 永远不会到达
 }
 ```
 
-[`errdefer`](https://ziglang.org/documentation/master/#errdefer) works like [`defer`](https://ziglang.org/documentation/master/#defer), but only executing when the function is returned from with an error inside of the [`errdefer`](https://ziglang.org/documentation/master/#errdefer)'s block.
+[`errdefer`](https://ziglang.org/documentation/master/#errdefer)的工作方式类似于[`defer`](https://ziglang.org/documentation/master/#defer)，但只有当函数从[`errdefer`](https://ziglang.org/documentation/master/#errdefer)的块中返回错误时才执行。
 
 ```zig
 var problems: u32 = 98;
@@ -318,7 +318,7 @@ test "errdefer" {
 }
 ```
 
-Error unions returned from a function can have their error sets inferred by not having an explicit error set. This inferred error set contains all possible errors that the function may return.
+从函数返回的错误联合可以通过没有显式错误集来推断其错误集。这个推断的错误集包含函数可能返回的所有可能的错误。
 
 ```zig
 fn createFile() !void {
@@ -326,16 +326,16 @@ fn createFile() !void {
 }
 
 test "inferred error set" {
-    //type coercion successfully takes place
+    //类型强制转换成功执行
     const x: error{AccessDenied}!void = createFile();
 
-    //Zig does not let us ignore error unions via _ = x;
-    //we must unwrap it with "try", "catch", or "if" by any means
+    //Zig不允许我们通过_ = x忽略错误联合；
+    //我们必须用“try”、“catch”或“if”来打开它
     _ = x catch {};
 }
 ```
 
-Error sets can be merged.
+可以合并错误集。
 
 ```zig
 const A = error{ NotDir, PathNotFound };
@@ -343,13 +343,13 @@ const B = error{ OutOfMemory, PathNotFound };
 const C = A || B;
 ```
 
-`anyerror` is the global error set, which due to being the superset of all error sets, can have an error from any set coerced to it. Its usage should be generally avoided.
+`anyerror`是全局错误集，由于它是所有错误集的超集，因此可以将任何集合的错误强制转换到它。一般应该避免使用它。
 
 # Switch
 
-Zig's `switch` works as both a statement and an expression. The types of all branches must coerce to the type which is being switched upon. All possible values must have an associated branch - values cannot be left out. Cases cannot fall through to other branches.
+Zig的`switch`既可以作为语句，也可以作为表达式。所有分支的类型必须强制转换为正在切换的类型。所有可能的值都必须有关联的分支——不能遗漏值。情况不能转到其他分支。
 
-An example of a switch statement. The else is required to satisfy the exhaustiveness of this switch.
+switch语句的示例。需要else来满足这个switch的穷尽性。
 
 ```zig
 test "switch statement" {
@@ -359,8 +359,8 @@ test "switch statement" {
             x = -x;
         },
         10, 100 => {
-            //special considerations must be made
-            //when dividing signed integers
+            //必须作出特别考虑
+            //当除有符号整数
             x = @divExact(x, 10);
         },
         else => {},
@@ -369,7 +369,7 @@ test "switch statement" {
 }
 ```
 
-Here is the former, but as a switch expression.
+这里是前者，但作为一个switch表达式。
 ```zig
 test "switch expression" {
     var x: i8 = 10;
@@ -382,11 +382,11 @@ test "switch expression" {
 }
 ```
 
-# Runtime Safety
+# 运行时安全
 
-Zig provides a level of safety, where problems may be found during execution. Safety can be left on, or turned off. Zig has many cases of so-called __detectable illegal behaviour__, meaning that illegal behaviour will be caught (causing a panic) with safety on, but will result in undefined behaviour with safety off. Users are strongly recommended to develop and test their software with safety on, despite its speed penalties.
+Zig提供了一定级别的安全，在执行过程中可能会发现问题。安全开关可以打开，也可以关闭。Zig有许多所谓的 __可检测的非法行为__，这意味着非法行为将被捕获（引起恐慌），但将导致未定义行为的安全关闭。强烈建议用户在开发和测试软件时打开安全开关，尽管这会对速度造成影响。
 
-For example, runtime safety protects you from out of bounds indices.
+例如，运行时安全性保护你免受越界索引的影响。
 
 <!--fail_test-->
 ```zig
@@ -404,7 +404,7 @@ test "out of bounds"...index out of bounds
              ^
 ```
 
-The user may disable runtime safety for the current block using the built-in function [`@setRuntimeSafety`](https://ziglang.org/documentation/master/#setRuntimeSafety).
+用户可以使用内置函数[`@setRuntimeSafety`](https://ziglang.org/documentation/master/#setRuntimeSafety)禁用当前块的运行时安全。
 
 ```zig
 test "out of bounds, no safety" {
@@ -416,13 +416,13 @@ test "out of bounds, no safety" {
 }
 ```
 
-Safety is off for some build modes (to be discussed later).
+对于某些构建模式（稍后讨论），安全性是关闭的。
 
 # Unreachable
 
-[`unreachable`](https://ziglang.org/documentation/master/#unreachable) is an assertion to the compiler that this statement will not be reached. It can tell the compiler that a branch is impossible, which the optimiser can then take advantage of. Reaching an [`unreachable`](https://ziglang.org/documentation/master/#unreachable) is detectable illegal behaviour.
+[`unreachable`](https://ziglang.org/documentation/master/#unreachable)是对编译器的一个断言，即无法到达该语句。它可以告诉编译器一个分支是不可能的，然后优化器可以利用它。到达一个[`unreachable`](https://ziglang.org/documentation/master/#unreachable)的地方是明显的非法行为。
 
-As it is of the type [`noreturn`](https://ziglang.org/documentation/master/#noreturn), it is compatible with all other types. Here it coerces to u32.
+由于它是[`noreturn`](https://ziglang.org/documentation/master/#noreturn)类型，因此它与所有其他类型兼容。这里它强制转换到u32。
 <!--fail_test-->
 ```zig
 test "unreachable" {
@@ -438,7 +438,7 @@ test "unreachable"...reached unreachable code
                                       ^
 ```
 
-Here is an unreachable being used in a switch.
+这里是switch中使用的unreachable。
 ```zig
 fn asciiToUpper(x: u8) u8 {
     return switch (x) {
@@ -454,11 +454,11 @@ test "unreachable switch" {
 }
 ```
 
-# Pointers
+# 指针
 
-Normal pointers in Zig cannot have 0 or null as a value. They follow the syntax `*T`, where `T` is the child type.
+在Zig中，普通指针的值不能为0或null。它们遵循语法`*T`，其中`T`是子类型。
 
-Referencing is done with `&variable`, and dereferencing is done with `variable.*`.
+引用语法为`&variable`，解引用语法为`variable.*`。
 
 ```zig
 fn increment(num: *u8) void {
@@ -472,7 +472,7 @@ test "pointers" {
 }
 ```
 
-Trying to set a `*T` to the value 0 is detectable illegal behaviour.
+试图将一个`*T`设置为0是可检测到的非法行为。
 
 <!--fail_test-->
 ```zig
@@ -489,7 +489,7 @@ Test [23/126] test.naughty pointer... thread 21598 panic: cast causes pointer to
                  ^
 ```
 
-Zig also has const pointers, which cannot be used to modify the referenced data. Referencing a const variable will yield a const pointer.
+Zig也有const指针，不能用来修改引用的数据。引用const变量将产生const指针。
 
 <!--fail_test-->
 ```zig
@@ -505,12 +505,12 @@ error: cannot assign to constant
         ^
 ```
 
-A `*T` coerces to a `*const T`.
+`*T`强制转换为`*const T`。
 
 
-# Pointer sized integers
+# 指针大小的整数
 
-`usize` and `isize` are given as unsigned and signed integers which are the same size as pointers.
+`usize`和`isize`分别以无符号整数和有符号整数的形式给出，它们的大小与指针相同。
 
 ```zig
 test "usize" {
@@ -519,17 +519,17 @@ test "usize" {
 }
 ```
 
-# Many-Item Pointers
+# 多项指针
 
-Sometimes, you may have a pointer to an unknown amount of elements. `[*]T` is the solution for this, which works like `*T` but also supports indexing syntax, pointer arithmetic, and slicing. Unlike `*T`, it cannot point to a type which does not have a known size. `*T` coerces to `[*]T`.
+有时，你可能有一个指向未知数量元素的指针。`[*]T`是这个问题的解决方案，它的工作原理类似于`*T`，但也支持索引语法、指针算术和切片。与`*T`不同，它不能指向未知大小的类型。`*T`强制转换到`[*]T`。
 
-These many pointers may point to any amount of elements, including 0 and 1.
+这些指针可以指向任意数量的元素，包括0和1。
 
-# Slices
+# 切片
 
-Slices can be thought of as a pair of `[*]T` (the pointer to the data) and a `usize` (the element count). Their syntax is `[]T`, with `T` being the child type. Slices are used heavily throughout Zig for when you need to operate on arbitrary amounts of data. Slices have the same attributes as pointers, meaning that there also exists const slices. For loops also operate over slices. String literals in Zig coerce to `[]const u8`.
+切片可以被认为是一对`[*]T`（指向数据的指针）和一个`usize`（元素计数）。它们的语法是`[]T`，其中`T`是子类型。在整个Zig中，当你需要对任意数量的数据进行操作时，会大量使用切片。切片具有与指针相同的属性，这意味着也存在const切片。For循环也对切片进行操作。Zig格式的字符串强制转换为`[]const u8`。
 
-Here, the syntax `x[n..m]` is used to create a slice from an array. This is called __slicing__, and creates a slice of the elements starting at `x[n]` and ending at `x[m - 1]`. This example uses a const slice, as the values to which the slice points need not be modified.
+这里，语法`x[n..m]`用于从数组中创建切片。这被称为 __切片__，并创建一个从`x[n]`开始到`x[m - 1]`结束的元素切片。本例使用const切片，因为切片点指向的值不需要修改。
 
 ```zig
 fn total(values: []const u8) usize {
@@ -544,7 +544,7 @@ test "slices" {
 }
 ```
 
-When these `n` and `m` values are both known at compile time, slicing will actually produce a pointer to an array. This is not an issue as a pointer to an array i.e. `*[N]T` will coerce to a `[]T`.
+当这些`n`和`m`值在编译时都是已知的，切片实际上会生成一个指向数组的指针。这不是一个指向数组的指针的问题，即`*[N]T`将强制转换为`[]T`。
 
 ```zig
 test "slices 2" {
@@ -554,7 +554,7 @@ test "slices 2" {
 }
 ```
 
-The syntax `x[n..]` can also be used when you want to slice to the end.
+语法`x[n..]`也可以用在你想切到最后的时候。
 
 ```zig
 test "slices 3" {
@@ -564,23 +564,23 @@ test "slices 3" {
 }
 ```
 
-Types that may be sliced are arrays, many pointers and slices.
+可以切片的类型有数组、指针和切片。
 
-# Enums
+# 枚举
 
-Zig's enums allow you to define types with a restricted set of named values.
+Zig的枚举允许你使用一组受限的命名值来定义类型。
 
-Let's declare an enum.
+让我们声明一个枚举。
 ```zig
 const Direction = enum { north, south, east, west };
 ```
 
-Enums types may have specified (integer) tag types.
+枚举类型可以有指定的（整数）标记类型。
 ```zig
 const Value = enum(u2) { zero, one, two };
 ```
 
-Enum's ordinal values start at 0. They can be accessed with the built-in function [`@intFromEnum`](https://ziglang.org/documentation/master/#intFromEnum).
+Enum的序数从0开始。它们可以通过内置函数[`@intFromEnum`](https://ziglang.org/documentation/master/#intFromEnum)访问。
 ```zig
 test "enum ordinal value" {
     try expect(@intFromEnum(Value.zero) == 0);
@@ -589,7 +589,7 @@ test "enum ordinal value" {
 }
 ```
 
-Values can be overridden, with the next values continuing from there.
+值可以被覆盖，下一个值从那里继续。
 ```zig
 const Value2 = enum(u32) {
     hundred = 100,
@@ -606,7 +606,7 @@ test "set enum ordinal value" {
 }
 ```
 
-Enums can be given methods. These act as namespaced functions that can be called with the dot syntax.
+可以将方法赋给枚举。它们充当可以用点语法调用的命名空间函数。
 
 ```zig
 const Suit = enum {
@@ -624,7 +624,7 @@ test "enum method" {
 }
 ```
 
-Enums can also be given `var` and `const` declarations. These act as namespaced globals, and their values are unrelated and unattached to instances of the enum type.
+枚举也可以被赋予`var`和`const`声明。它们充当具有名称空间的全局变量，它们的值与枚举类型的实例无关且不附加。
 
 ```zig
 const Mode = enum {
@@ -640,9 +640,9 @@ test "hmm" {
 ```
 
 
-# Structs
+# 结构体
 
-Structs are Zig's most common kind of composite data type, allowing you to define types that can store a fixed set of named fields. Zig gives no guarantees about the in-memory order of fields in a struct or its size. Like arrays, structs are also neatly constructed with `T{}` syntax. Here is an example of declaring and filling a struct.
+结构体是Zig最常见的复合数据类型，允许你定义可以存储固定的命名对象集的类型字段。Zig不保证结构体中字段的内存顺序或其大小。和数组一样，结构体也很简洁用`T{}`语法构造。下面是一个声明和填充结构体的例子。
 ```zig
 const Vec3 = struct { x: f32, y: f32, z: f32 };
 
@@ -656,7 +656,7 @@ test "struct usage" {
 }
 ```
 
-Fields may be given defaults:
+所有字段都必须给定一个值：
 
 <!--fail_test-->
 ```zig
@@ -674,7 +674,7 @@ error: missing field: 'y'
                         ^
 ```
 
-Fields may be given defaults:
+字段可以给出默认值：
 ```zig
 const Vec4 = struct { x: f32, y: f32, z: f32 = 0, w: f32 = undefined };
 
@@ -687,9 +687,9 @@ test "struct defaults" {
 }
 ```
 
-Like enums, structs may also contain functions and declarations.
+和枚举一样，结构体也可以包含函数和声明。
 
-Structs have the unique property that when given a pointer to a struct, one level of dereferencing is done automatically when accessing fields. Notice how, in this example, self.x and self.y are accessed in the swap function without needing to dereference the self pointer.
+结构体有一个独特的属性，当给定一个指向结构体的指针时，将自动执行一层解引用访问字段。注意，在这个例子中，在swap函数中访问self.x和self.y不需要解引用self指针。
 
 ```zig
 const Stuff = struct {
@@ -710,11 +710,11 @@ test "automatic dereference" {
 }
 ```
 
-# Unions
+# 联合
 
-Zig's unions allow you to define types which store one value of many possible typed fields; only one field may be active at one time.
+Zig的联合允许你定义存储许多可能类型字段的一个值的类型；一次只能有一个字段可用。
 
-Bare union types do not have a guaranteed memory layout. Because of this, bare unions cannot be used to reinterpret memory. Accessing a field in a union which is not active is detectable illegal behaviour.
+裸联合类型没有保证的内存布局。因此，裸联合不能用于重新解释内存。访问union中未激活的字段是可检测到的非法行为。
 
 <!--fail_test-->
 ```zig
@@ -736,7 +736,7 @@ test "simple union"...access of inactive union field
            ^
 ```
 
-Tagged unions are unions which use an enum to detect which field is active. Here we make use of payload capturing again, to switch on the tag type of a union while also capturing the value it contains. Here we use a *pointer capture*; captured values are immutable, but with the `|*value|` syntax, we can capture a pointer to the values instead of the values themselves. This allows us to use dereferencing to mutate the original value.
+标记联合是使用枚举来检测哪个字段是活动的联合。这里我们再次利用有效载荷捕获来切换获取联合的标记类型，同时捕获其包含的值。这里使用*指针捕获*；捕获的值是不可变，但是使用`|*value|`语法，我们可以捕获指向值的指针，而不是值本身。这使我们能够使用解引用来改变原始值。
 
 ```zig
 const Tag = enum { a, b, c };
@@ -754,22 +754,22 @@ test "switch on tagged union" {
 }
 ```
 
-The tag type of a tagged union can also be inferred. This is equivalent to the Tagged type above.
+还可以推断标记联合的标记类型。这相当于上面的Tagged类型。
 
 <!--no_test-->
 ```zig
 const Tagged = union(enum) { a: u8, b: f32, c: bool };
 ```
 
-`void` member types can have their type omitted from the syntax. Here, none is of type `void`.
+`void`成员类型的类型可以从语法中省略。这里，没有`void`类型的。
 
 ```zig
 const Tagged2 = union(enum) { a: u8, b: f32, c: bool, none };
 ```
 
-# Integer Rules
+# 整数规则
 
-Zig supports hex, octal and binary integer literals.
+Zig支持十六进制、八进制和二进制整数字面值。
 ```zig
 const decimal_int: i32 = 98222;
 const hex_int: u8 = 0xff;
@@ -777,7 +777,7 @@ const another_hex_int: u8 = 0xFF;
 const octal_int: u16 = 0o755;
 const binary_int: u8 = 0b11110000;
 ```
-Underscores may also be placed between digits as a visual separator.
+下划线也可以放在数字之间作为视觉分隔符。
 ```zig
 const one_billion: u64 = 1_000_000_000;
 const binary_mask: u64 = 0b1_1111_1111;
@@ -785,7 +785,7 @@ const permissions: u64 = 0o7_5_5;
 const big_address: u64 = 0xFF80_0000_0000_0000;
 ```
 
-"Integer Widening" is allowed, which means that integers of a type may coerce to an integer of another type, providing that the new type can fit all of the values that the old type can.
+允许“整数扩大”，这意味着一种类型的整数可以强制转换为另一种类型的整数，前提是新类型可以容纳旧类型所能容纳的所有值。
 
 ```zig
 test "integer widening" {
@@ -796,7 +796,7 @@ test "integer widening" {
 }
 ```
 
-If you have a value stored in an integer that cannot coerce to the type that you want, [`@intCast`](https://ziglang.org/documentation/master/#intCast) may be used to explicitly convert from one type to the other. If the value given is out of the range of the destination type, this is detectable illegal behaviour.
+如果存储在整型中的值不能强制转换为所需的类型，则可以使用[`@intCast`](https://ziglang.org/documentation/master/#intCast)显式地从一种类型转换为另一种类型。如果给定的值超出目标类型的范围，这是可检测到的非法行为。
 
 ```zig
 test "@intCast" {
@@ -806,9 +806,9 @@ test "@intCast" {
 }
 ```
 
-Integers, by default, are not allowed to overflow. Overflows are detectable illegal behaviour. Sometimes, being able to overflow integers in a well-defined manner is a wanted behaviour. For this use case, Zig provides overflow operators.
+默认情况下，整数不允许溢出。溢出是可察觉的非法行为。有时，能够以良好定义的方式溢出整数是需要的行为。对于这个用例，Zig提供了溢出操作符。
 
-| Normal Operator | Wrapping Operator |
+| 一般操作符       | 溢出操作符          |
 |-----------------|-------------------|
 | +               | +%                |
 | -               | -%                |
@@ -825,9 +825,9 @@ test "well defined overflow" {
 }
 ```
 
-# Floats
+# 浮点数
 
-Zig's floats are strictly IEEE compliant unless [`@setFloatMode(.Optimized)`](https://ziglang.org/documentation/master/#setFloatMode) is used, which is equivalent to GCC's `-ffast-math`. Floats coerce to larger float types.
+Zig的浮点数是严格符合IEEE的，除非使用[`@setFloatMode(.Optimized)`](https://ziglang.org/documentation/master/#setFloatMode)，这相当于GCC的`-ffast-math`。float强制转换为更大的float类型
 
 ```zig
 test "float widening" {
@@ -838,7 +838,7 @@ test "float widening" {
 }
 ```
 
-Floats support multiple kinds of literal.
+浮点支持多种字面量。
 ```zig
 const floating_point: f64 = 123.0E+77;
 const another_float: f64 = 123.0;
@@ -848,14 +848,14 @@ const hex_floating_point: f64 = 0x103.70p-5;
 const another_hex_float: f64 = 0x103.70;
 const yet_another_hex_float: f64 = 0x103.70P-5;
 ```
-Underscores may also be placed between digits.
+下划线也可以放在数字之间。
 ```zig
 const lightspeed: f64 = 299_792_458.000_000;
 const nanosecond: f64 = 0.000_000_001;
 const more_hex: f64 = 0x1234_5678.9ABC_CDEFp-10;
 ```
 
-Integers and floats may be converted using the built-in functions [`@floatFromInt`](https://ziglang.org/documentation/0.11.0/#floatFromInt) and [`@intFromFloat`](https://ziglang.org/documentation/0.11.0/#intFromFloat). [`@floatFromInt`](https://ziglang.org/documentation/0.11.0/#floatFromInt) is always safe, whereas [`@intFromFloat`](https://ziglang.org/documentation/0.11.0/#intFromFloat) is detectable illegal behaviour if the float value cannot fit in the integer destination type.
+整数和浮点可以使用内置函数[`@floatFromInt`](https://ziglang.org/documentation/0.11.0/#floatFromInt)和[`@intFromFloat`](https://ziglang.org/documentation/0.11.0/#intFromFloat)进行转换。[`@floatFromInt`](https://ziglang.org/documentation/0.11.0/#floatFromInt)总是安全的，而[`@intFromFloat`](https://ziglang.org/documentation/0.11.0/#intFromFloat)是可检测的非法行为，如果浮点值不适合整型目标类型。
 
 ```zig
 test "int-float conversion" {
@@ -866,9 +866,9 @@ test "int-float conversion" {
 }
 ```
 
-# Labelled Blocks
+# 带标签的块
 
-Blocks in Zig are expressions and can be given labels, which are used to yield values. Here, we are using a label called `blk`. Blocks yield values, meaning they can be used in place of a value. The value of an empty block `{}` is a value of the type `void`.
+Zig中的块是表达式，可以给出用于生成值的标签。这里，我们使用一个名为`blk`的标签。块生成值，这意味着它们可以用来代替值。空块`{}`的值是`void`类型的值。
 
 ```zig
 test "labelled blocks" {
@@ -883,7 +883,7 @@ test "labelled blocks" {
 }
 ```
 
-This can be seen as being equivalent to C's `i++`.
+这可以看作是相当于C的`i++`。
 <!--no_test-->
 ```zig
 blk: {
@@ -893,9 +893,9 @@ blk: {
 }
 ```
 
-# Labelled Loops
+# 带标签的循环
 
-Loops can be given labels, allowing you to `break` and `continue` to outer loops.
+循环可以被赋予标签，允许你`break`并`continue`进行外部循环。
 
 ```zig
 test "nested continue" {
@@ -910,9 +910,9 @@ test "nested continue" {
 }
 ```
 
-# Loops as expressions
+# 循环作为表达式
 
-Like `return`, `break` accepts a value. This can be used to yield a value from a loop. Loops in Zig also have an `else` branch, which is evaluated when the loop is not exited with a `break`.
+和`return`一样，`break`也接受一个值。这可用于从循环中产生一个值。Zig中的循环也有一个`else`分支，该分支在没有以`break`退出循环时进行计算。
 
 ```zig
 fn rangeHasNumber(begin: usize, end: usize, number: usize) bool {
@@ -929,9 +929,9 @@ test "while loop expression" {
 }
 ```
 
-# Optionals
+# 可选项
 
-Optionals use the syntax `?T` and are used to store the data [`null`](https://ziglang.org/documentation/master/#null), or a value of type `T`.
+可选项使用语法`?T`，用于存储数据[`null`](https://ziglang.org/documentation/master/#null)或类型为`T`的值。
 
 ```zig
 test "optional" {
@@ -944,7 +944,7 @@ test "optional" {
 }
 ```
 
-Optionals support the `orelse` expression, which acts when the optional is [`null`](https://ziglang.org/documentation/master/#null). This unwraps the optional to its child type.
+可选项支持`orelse`表达式，该表达式在可选项为[`null`](https://ziglang.org/documentation/master/#null)时起作用。这将可选对象展开为它的子类型。
 
 ```zig
 test "orelse" {
@@ -955,7 +955,7 @@ test "orelse" {
 }
 ```
 
-`.?` is a shorthand for `orelse unreachable`. This is used for when you know it is impossible for an optional value to be null, and using this to unwrap a [`null`](https://ziglang.org/documentation/master/#null) value is detectable illegal behaviour.
+`.?`是`orelse unreachable`的简写。当你知道可选值不可能为空时，使用此方法来打开[`null`](https://ziglang.org/documentation/master/#null)值是可检测到的非法行为。
 
 ```zig
 test "orelse unreachable" {
@@ -967,9 +967,9 @@ test "orelse unreachable" {
 }
 ```
 
-Payload capturing works in many places for optionals, meaning that in the event that it is non-null, we can "capture" its non-null value.
+有效载荷捕获在很多地方都适用于可选项，这意味着在它是非空的情况下，我们可以“捕获”它的非空值。
 
-Here we use an `if` optional payload capture; a and b are equivalent here. `if (b) |value|` captures the value of `b` (in the cases where `b` is not null), and makes it available as `value`. As in the union example, the captured value is immutable, but we can still use a pointer capture to modify the value stored in `b`.
+这里我们使用一个`if`负载捕获；a和b在这里是等价的。`if (b) |value|`捕获`b`的值（在`b`不为空的情况下），并使其作为`value`可用。与union示例一样，捕获的值是不可变的，但仍然可以使用指针捕获来修改存储在`b`中的值。
 
 ```zig
 test "if optional payload capture" {
@@ -987,7 +987,7 @@ test "if optional payload capture" {
 }
 ```
 
-And with `while`:
+和`while`一起用时：
 ```zig
 var numbers_left: u32 = 4;
 fn eventuallyNullSequence() ?u32 {
@@ -1005,13 +1005,13 @@ test "while null capture" {
 }
 ```
 
-Optional pointer and optional slice types do not take up any extra memory compared to non-optional ones. This is because internally they use the 0 value of the pointer for `null`.
+与非可选类型相比，可选指针和可选切片类型不会占用任何额外的内存。这是因为它们在内部使用指针的0值来表示`null`。
 
-This is how null pointers in Zig work - they must be unwrapped to a non-optional before dereferencing, which stops null pointer dereferences from happening accidentally.
+这就是Zig中的空指针的工作方式——在解引用之前，它们必须被解包装为非可选的，这可以防止空指针解引用意外发生。
 
 # Comptime
 
-Blocks of code may be forcibly executed at compile time using the [`comptime`](https://ziglang.org/documentation/master/#comptime) keyword. In this example, the variables x and y are equivalent.
+代码块可以在编译时使用[`comptime`](https://ziglang.org/documentation/master/#comptime)关键字强制执行。在这个例子中，变量x和y是等价的。
 
 ```zig
 test "comptime blocks" {
@@ -1025,7 +1025,7 @@ test "comptime blocks" {
 }
 ```
 
-Integer literals are of the type `comptime_int`. These are special in that they have no size (they cannot be used at runtime!), and they have arbitrary precision. `comptime_int` values coerce to any integer type that can hold them. They also coerce to floats. Character literals are of this type.
+整型字面值为`comptime_int`类型。它们的特殊之处在于它们没有大小（它们不能在运行时使用！），并且它们具有任意精度。`comptime_int`值强制转换为可以容纳它们的任何整数类型。它们还强制浮动。字符字面量就是这种类型。
 
 ```zig
 test "comptime_int" {
@@ -1039,9 +1039,9 @@ test "comptime_int" {
 }
 ```
 
-`comptime_float` is also available, which internally is an `f128`. These cannot be coerced to integers, even if they hold an integer value.
+`comptime_float`也是可用的，它在内部是一个`f128`。不能将它们强制转换为整数，即使它们保存的是整数值。
 
-Types in Zig are values of the type `type`. These are available at compile time. We have previously encountered them by checking [`@TypeOf`](https://ziglang.org/documentation/master/#TypeOf) and comparing with other types, but we can do more.
+Zig中的类型是`type`类型的值。这些在编译时可用。我们以前通过检查[`@TypeOf`](https://ziglang.org/documentation/master/#TypeOf)和与其他类型比较遇到过它们，但是我们可以做更多。
 
 ```zig
 test "branching on types" {
@@ -1051,7 +1051,7 @@ test "branching on types" {
 }
 ```
 
-Function parameters in Zig can be tagged as being [`comptime`](https://ziglang.org/documentation/master/#comptime). This means that the value passed to that function parameter must be known at compile time. Let's make a function that returns a type. Notice how this function is PascalCase, as it returns a type.
+可以将Zig中的函数参数标记为[`comptime`](https://ziglang.org/documentation/master/#comptime)。这意味着传递给该函数形参的值必须在编译时已知。让我们创建一个返回类型的函数。注意这个函数是如何使用PascalCase的，因为它返回一个类型。
 
 ```zig
 fn Matrix(
@@ -1067,7 +1067,7 @@ test "returning a type" {
 }
 ```
 
-We can reflect upon types using the built-in [`@typeInfo`](https://ziglang.org/documentation/master/#typeInfo), which takes in a `type` and returns a tagged union. This tagged union type can be found in [`std.builtin.TypeInfo`](https://ziglang.org/documentation/master/std/#std;builtin.TypeInfo) (info on how to make use of imports and std later).
+我们可以使用内置的[`@typeInfo`](https://ziglang.org/documentation/master/#typeInfo)来反射类型，它接受一个`type`并返回一个带标签的联合。这个带标签的联合类型可以在[`std.builtin.TypeInfo`](https://ziglang.org/documentation/master/std/#std;builtin.TypeInfo)中找到（稍后会提供如何使用导入和std的信息）。
 
 ```zig
 fn addSmallInts(comptime T: type, a: T, b: T) T {
@@ -1088,9 +1088,9 @@ test "typeinfo switch" {
 }
 ```
 
-We can use the [`@Type`](https://ziglang.org/documentation/master/#Type) function to create a type from a [`@typeInfo`](https://ziglang.org/documentation/master/#typeInfo). [`@Type`](https://ziglang.org/documentation/master/#Type) is implemented for most types but is notably unimplemented for enums, unions, functions, and structs.
+我们可以使用[`@Type`](https://ziglang.org/documentation/master/#Type)函数从[`@typeInfo`](https://ziglang.org/documentation/master/#typeInfo)创建类型。[`@Type`](https://ziglang.org/documentation/master/#Type)对大多数类型都实现了，但对枚举、联合、函数和结构体没有实现。
 
-Here anonymous struct syntax is used with `.{}`, because the `T` in `T{}` can be inferred. Anonymous structs will be covered in detail later. In this example we will get a compile error if the `Int` tag isn't set.
+这里匿名结构语法与`.{}`一起使用，因为`T{}`中的`T`可以被推断出来。稍后将详细介绍匿名结构。在这个例子中，如果没有设置`Int`标记，我们将得到一个编译错误。
 
 ```zig
 fn GetBiggerInt(comptime T: type) type {
@@ -1108,7 +1108,7 @@ test "@Type" {
 }
 ```
 
-Returning a struct type is how you make generic data structures in Zig. The usage of [`@This`](https://ziglang.org/documentation/master/#This) is required here, which gets the type of the innermost struct, union, or enum. Here [`std.mem.eql`](https://ziglang.org/documentation/master/std/#std;mem.eql) is also used which compares two slices.
+返回结构类型是在Zig中创建泛型数据结构的方法。这里需要使用[`@This`](https://ziglang.org/documentation/master/#This)，它获取最内层结构体、联合或枚举的类型。这里还使用了[`std.mem.eql`](https://ziglang.org/documentation/master/std/#std;mem.eql)来比较两个片。
 
 ```zig
 fn Vec(
@@ -1145,7 +1145,7 @@ test "generic vector" {
 }
 ```
 
-The types of function parameters can also be inferred by using `anytype` in place of a type. [`@TypeOf`](https://ziglang.org/documentation/master/#TypeOf) can then be used on the parameter.
+也可以通过使用`anytype`代替类型来推断函数参数的类型。然后可以在参数上使用[`@TypeOf`](https://ziglang.org/documentation/master/#TypeOf)。
 
 ```zig
 fn plusOne(x: anytype) @TypeOf(x) {
@@ -1157,7 +1157,7 @@ test "inferred function parameter" {
 }
 ```
 
-Comptime also introduces the operators `++` and `**` for concatenating and repeating arrays and slices. These operators do not work at runtime.
+Comptime还引入了操作符`++`和`**`，用于连接和重复数组和切片。这些操作符在运行时不起作用。
 
 ```zig
 test "++" {
@@ -1178,11 +1178,11 @@ test "**" {
 }
 ```
 
-# Payload Captures
+# 有效载荷捕获
 
-Payload captures use the syntax `|value|` and appear in many places, some of which we've seen already. Wherever they appear, they are used to "capture" the value from something.
+有效负载捕获使用语法`|value|`，出现在许多地方，其中一些我们已经看到了。无论它们出现在哪里，它们都是用来“获取”某物的价值。
 
-With if statements and optionals.
+if语句和可选项中使用。
 ```zig
 test "optional-if" {
     var maybe_num: ?usize = 10;
@@ -1195,7 +1195,7 @@ test "optional-if" {
 }
 ```
 
-With if statements and error unions. The else with the error capture is required here.
+if语句和错误联合中使用。这里需要带有错误捕获的else。
 ```zig
 test "error union if" {
     var ent_num: error{UnknownEntity}!u32 = 5;
@@ -1209,7 +1209,7 @@ test "error union if" {
 }
 ```
 
-With while loops and optionals. This may have an else block.
+使用while循环和可选项。这可能有一个else块。
 ```zig
 test "while optional" {
     var i: ?u32 = 10;
@@ -1224,7 +1224,7 @@ test "while optional" {
 }
 ```
 
-With while loops and error unions. The else with the error capture is required here.
+在while循环和错误联合中使用。这里需要带有错误捕获的else。
 
 ```zig
 var numbers_left2: u32 = undefined;
@@ -1247,7 +1247,7 @@ test "while error union capture" {
 }
 ```
 
-For loops.
+For循环。
 ```zig
 test "for capture" {
     const x = [_]i8{ 1, 5, 120, -5 };
@@ -1255,7 +1255,7 @@ test "for capture" {
 }
 ```
 
-Switch cases on tagged unions.
+带标签的联合的switch case。
 ```zig
 const Info = union(enum) {
     a: u32,
@@ -1272,8 +1272,8 @@ test "switch capture" {
             break :blk 1;
         },
         .c => 2,
-        //if these are of the same type, they
-        //may be inside the same capture group
+        //如果它们是相同类型的，它们
+        //可以在同一个捕获组中
         .a, .d => |num| blk: {
             try expect(@TypeOf(num) == u32);
             break :blk num * 2;
@@ -1283,7 +1283,7 @@ test "switch capture" {
 }
 ```
 
-As we saw in the Union and Optional sections above, values captured with the `|val|` syntax are immutable (similar to function arguments), but we can use pointer capture to modify the original values. This captures the values as pointers that are themselves still immutable, but because the value is now a pointer, we can modify the original value by dereferencing it:
+正如我们在上面的联合和可选项小节中看到的，用`|val|`语法捕获的值是不可变的（类似于函数参数），但是我们可以使用指针捕获来修改原始值。这捕获的值作为指针本身仍然是不可变的，但因为值现在是一个指针，我们可以通过解引用来修改原始值:
 
 ```zig
 test "for with pointer capture" {
@@ -1293,9 +1293,9 @@ test "for with pointer capture" {
 }
 ```
 
-# Inline Loops
+# 内嵌循环
 
-`inline` loops are unrolled, and allow some things to happen that only work at compile time. Here we use a [`for`](https://ziglang.org/documentation/master/#inline-for), but a [`while`](https://ziglang.org/documentation/master/#inline-while) works similarly.
+`inline`循环是展开的，允许一些只在编译时起作用的事情发生。这里我们用[`for`](https://ziglang.org/documentation/master/#inline-for)，但[`while`](https://ziglang.org/documentation/master/#inline-while)的用法类似。
 ```zig
 test "inline for" {
     const types = [_]type{ i32, f32, u8, bool };
@@ -1305,11 +1305,11 @@ test "inline for" {
 }
 ```
 
-Using these for performance reasons is inadvisable unless you've tested that explicitly unrolling is faster; the compiler tends to make better decisions here than you.
+出于性能原因使用这些是不明智的，除非你已经测试过显式展开更快；编译器往往比你做出更好的决定。
 
-# Opaque
+# 不透明的
 
-[`opaque`](https://ziglang.org/documentation/master/#opaque) types in Zig have an unknown (albeit non-zero) size and alignment. Because of this these data types cannot be stored directly. These are used to maintain type safety with pointers to types that we don't have information about.
+在Zig中，[`opaque`](https://ziglang.org/documentation/master/#opaque)类型的大小和对齐方式是未知的（尽管不是零）。因此，这些数据类型不能直接存储。它们用于使用指向我们没有信息的类型的指针来维护类型安全。
 
 <!--fail_test-->
 ```zig
@@ -1335,7 +1335,7 @@ test "opaque" {
                 ^
 ```
 
-Opaque types may have declarations in their definitions (the same as structs, enums and unions).
+不透明类型可以在其定义中进行声明（与结构体、枚举和联合类型相同）。
 
 <!--no_test-->
 ```zig
@@ -1353,11 +1353,11 @@ test "opaque with declarations" {
 }
 ```
 
-The typical usecase of opaque is to maintain type safety when interoperating with C code that does not expose complete type information.
+不透明的典型用例是在与不公开完整类型信息的C代码互操作时维护类型安全。
 
-# Anonymous Structs
+# 匿名结构体
 
-The struct type may be omitted from a struct literal. These literals may coerce to other struct types.
+结构字面值可以省略结构类型。这些字面值可以强制转换为其他结构类型。
 
 ```zig
 test "anonymous struct literal" {
@@ -1372,7 +1372,7 @@ test "anonymous struct literal" {
 }
 ```
 
-Anonymous structs may be completely anonymous i.e. without being coerced to another struct type.
+匿名结构可以是完全匿名的，即没有被强制转换到另一个结构类型。
 
 ```zig
 test "fully anonymous struct" {
@@ -1394,9 +1394,9 @@ fn dump(args: anytype) !void {
 ```
 <!-- TODO: mention tuple slicing when it's implemented -->
 
-Anonymous structs without field names may be created and are referred to as __tuples__. These have many of the properties that arrays do; tuples can be iterated over, indexed, can be used with the `++` and `**` operators, and have a len field. Internally, these have numbered field names starting at `"0"`, which may be accessed with the special syntax `@"0"` which acts as an escape for the syntax - things inside `@""` are always recognised as identifiers.
+可以创建没有字段名的匿名结构，并将其称为 __元组__。它们具有数组所具有的许多属性；元组可以被迭代，索引，可以与`++`和`**`操作符一起使用，并且有一个len字段。在内部，它们有以`"0"`开头的编号字段名，可以使用特殊语法`@"0"`访问，该语法充当语法的转义——`@""`内部的内容始终被视为标识符。
 
-An `inline` loop must be used to iterate over the tuple here, as the type of each tuple field may differ.
+这里必须使用`inline`循环来遍历元组，因为每个元组字段的类型可能不同。
 
 ```zig
 test "tuple" {
@@ -1417,11 +1417,11 @@ test "tuple" {
 }
 ```
 
-# Sentinel Termination
+# 哨兵终止
 
-Arrays, slices and many pointers may be terminated by a value of their child type. This is known as sentinel termination. These follow the syntax `[N:t]T`, `[:t]T`, and `[*:t]T`, where `t` is a value of the child type `T`.
+数组、切片和许多指针都可以用其子类型的值结束。这就是所谓的哨点终止。它们遵循语法`[N:t]T`、`[:t]T`和`[*:t]T`，其中`t`是子类型`T`的值。
 
-An example of a sentinel terminated array. The built-in [`@ptrCast`](https://ziglang.org/documentation/master/#ptrCast) is used to perform an unsafe type conversion. This shows us that the last element of the array is followed by a 0 byte.
+一个哨兵终止数组的例子。内置的[`@ptrCast`](https://ziglang.org/documentation/master/#ptrCast)用于执行不安全的类型转换。这向我们展示了数组的最后一个元素后面跟着一个0字节。
 
 ```zig
 test "sentinel termination" {
@@ -1431,7 +1431,7 @@ test "sentinel termination" {
 }
 ```
 
-The types of string literals is `*const [N:0]u8`, where N is the length of the string. This allows string literals to coerce to sentinel terminated slices, and sentinel terminated many pointers. Note: string literals are UTF-8 encoded.
+字符串字面值的类型是`*const [N:0]u8`，其中N是字符串的长度。这允许字符串字面值强制使用前哨终止的切片，以及前哨终止的许多指针。注意：字符串文字是UTF-8编码的。
 
 ```zig
 test "string literal" {
@@ -1439,7 +1439,7 @@ test "string literal" {
 }
 ```
 
-`[*:0]u8` and `[*:0]const u8` perfectly model C's strings.
+`[*:0]u8`和`[*:0]const u8`完美地模拟了C的字符串。
 
 ```zig
 test "C string" {
@@ -1453,7 +1453,7 @@ test "C string" {
 }
 ```
 
-Sentinel terminated types coerce to their non-sentinel-terminated counterparts.
+哨兵终止类型强制转换为非哨兵终止类型。
 
 ```zig
 test "coercion" {
@@ -1471,7 +1471,7 @@ test "coercion" {
 }
 ```
 
-Sentinel terminated slicing is provided which can be used to create a sentinel terminated slice with the syntax `x[n..m:t]`, where `t` is the terminator value. Doing this is an assertion from the programmer that the memory is terminated where it should be - getting this wrong is detectable illegal behaviour.
+提供了哨兵终止切片，可用于使用语法`x[n..m:t]`创建哨兵终止切片，其中`t`为终止值。这样做是一个断言，从程序员，内存终止在它应该如此——得到这个错误是可检测的非法行为。
 
 ```zig
 test "sentinel terminated slicing" {
@@ -1481,13 +1481,15 @@ test "sentinel terminated slicing" {
 }
 ```
 
-# Vectors
+# 向量
 
-Zig provides vector types for SIMD. These are not to be conflated with vectors in a mathematical sense, or vectors like C++'s std::vector (for this, see "Arraylist" in chapter 2). Vectors may be created using the [`@Type`](https://ziglang.org/documentation/master/#Type) built-in we used earlier, and [`std.meta.Vector`](https://ziglang.org/documentation/master/std/#std;meta.Vector) provides a shorthand for this.
+Zig为SIMD提供了向量类型。从数学意义上讲，它们不能与vector或像C++的std::vector这样的vector（关于这一点，请参阅第2章的“Arraylist”）混淆。向量可以使用我们之前使用的内置[`@Type`](https://ziglang.org/documentation/master/#Type)创建，[`std.meta.Vector`](https://ziglang.org/documentation/master/std/#std;meta.Vector)也提供了一种简写。
 
-Vectors can only have child types of booleans, integers, floats and pointers.
+向量只能有布尔值、整数、浮点数和指针的子类型。
 
 Operations between vectors with the same child type and length can take place. These operations are performed on each of the values in the vector.[`std.meta.eql`](https://ziglang.org/documentation/master/std/#std;meta.eql) is used here to check for equality between two vectors (also useful for other types like structs).
+
+具有相同子类型和长度的向量之间可以进行操作。这些操作是对向量中的每个值执行的。这里使用[`std.meta.eql`](https://ziglang.org/documentation/master/std/#std;meta.eql)来检查两个向量之间是否相等（对于结构体等其他类型也很有用）。
 
 ```zig
 const meta = @import("std").meta;
@@ -1500,7 +1502,7 @@ test "vector add" {
 }
 ```
 
-Vectors are indexable.
+向量是可索引的。
 ```zig
 test "vector indexing" {
     const x: @Vector(4, u8) = .{ 255, 0, 255, 0 };
@@ -1508,7 +1510,7 @@ test "vector indexing" {
 }
 ```
 
-The built-in function [`@splat`](https://ziglang.org/documentation/master/#splat) may be used to construct a vector where all of the values are the same. Here we use it to multiply a vector by a scalar.
+内置函数[`@splat`](https://ziglang.org/documentation/master/#splat)可以用来构造一个所有值都相同的向量。这里我们用它来用一个向量乘以一个标量。
 
 ```zig
 test "vector * scalar" {
@@ -1518,7 +1520,7 @@ test "vector * scalar" {
 }
 ```
 
-Vectors do not have a `len` field like arrays, but may still be looped over.
+向量不像数组那样有`len`字段，但仍然可以循环。
 
 ```zig
 test "vector looping" {
@@ -1533,23 +1535,23 @@ test "vector looping" {
 }
 ```
 
-Vectors coerce to their respective arrays.
+向量强制转换到它们各自的数组。
 
 ```zig
 const arr: [4]f32 = @Vector(4, f32){ 1, 2, 3, 4 };
 ```
 
-It is worth noting that using explicit vectors may result in slower software if you do not make the right decisions - the compiler's auto-vectorisation is fairly smart as-is.
+值得注意的是，如果你没有做出正确的决定，使用显式向量可能会导致软件速度变慢——编译器的自动矢量化是相当聪明的。
 
 # Imports
 
-The built-in function [`@import`](https://ziglang.org/documentation/master/#import) takes in a file, and gives you a struct type based on that file. All declarations labelled as `pub` (for public) will end up in this struct type, ready for use.
+内置函数[`@import`](https://ziglang.org/documentation/master/#import)接受一个文件，并基于该文件为你提供一个结构类型。所有标记为`pub`（表示public）的声明都将在此结构类型中结束，以备使用。
 
-`@import("std")` is a special case in the compiler, and gives you access to the standard library. Other [`@import`](https://ziglang.org/documentation/master/#import)s will take in a file path, or a package name (more on packages in a later chapter).
+`@import("std")`是编译器中的一种特殊情况，它允许你访问标准库。其他的[`@import`](https://ziglang.org/documentation/master/#import)会接受一个文件路径，或者一个包名（后面的章节会有更多关于包的内容）。
 
-We will explore more of the standard library in later chapters.
+我们将在后面的章节中探索更多的标准库。
 
-# End Of Chapter 1
-In the next chapter we will cover standard patterns, including many useful areas of the standard library.
+# 第一章结束
+在下一章中，我们将介绍标准模式，包括标准库中许多有用的领域。
 
-Feedback and PRs are welcome.
+欢迎反馈和PR。

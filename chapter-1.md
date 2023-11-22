@@ -1487,8 +1487,6 @@ Zig为SIMD提供了向量类型。从数学意义上讲，它们不能与vector�
 
 向量只能有布尔值、整数、浮点数和指针的子类型。
 
-Operations between vectors with the same child type and length can take place. These operations are performed on each of the values in the vector.[`std.meta.eql`](https://ziglang.org/documentation/master/std/#std;meta.eql) is used here to check for equality between two vectors (also useful for other types like structs).
-
 具有相同子类型和长度的向量之间可以进行操作。这些操作是对向量中的每个值执行的。这里使用[`std.meta.eql`](https://ziglang.org/documentation/master/std/#std;meta.eql)来检查两个向量之间是否相等（对于结构体等其他类型也很有用）。
 
 ```zig

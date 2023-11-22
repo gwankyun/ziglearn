@@ -5,15 +5,15 @@ date: 2023-09-11 18:00:00
 description: "Chapter 2 - This section of the tutorial will cover the Zig programming language's standard library in detail."
 ---
 
-Automatically generated standard library documentation can be found [here](https://ziglang.org/documentation/master/std/). Installing [ZLS](https://github.com/zigtools/zls/) may also help you explore the standard library, which provides completions.
+可以在[这里](https://ziglang.org/documentation/master/std/)找到自动生成的标准库文档。安装[ZLS](https://github.com/zigtools/zls/) 还可以帮助你探索提供补全功能的标准库。
 
-# Allocators
+# 分配器
 
-The Zig standard library provides a pattern for allocating memory, which allows the programmer to choose precisely how memory allocations are done within the standard library - no allocations happen behind your back in the standard library.
+Zig标准库提供了一种分配内存的模式，它允许程序员精确地选择如何在标准库中进行内存分配——标准库中不会在你背后进行任何分配。
 
-The most basic allocator is [`std.heap.page_allocator`](https://ziglang.org/documentation/master/std/#A;std:heap.page_allocator). Whenever this allocator makes an allocation, it will ask your OS for entire pages of memory; an allocation of a single byte will likely reserve multiple kibibytes. As asking the OS for memory requires a system call, this is also extremely inefficient for speed.
+最基本的分配器是[`std.heap.page_allocator`](https://ziglang.org/documentation/master/std/#A;std:heap.page_allocator)。每当这个分配器进行分配时，它都会向你的操作系统请求整个内存页；单个字节的分配可能会保留多个千兆字节。由于向操作系统请求内存需要一个系统调用，这对于速度而言也是极其低效的。
 
-Here, we allocate 100 bytes as a `[]u8`. Notice how defer is used in conjunction with a free - this is a common pattern for memory management in Zig.
+在这里，我们将100个字节分配为`[]u8`。请注意，defer是如何与free结合使用的——这是Zig中内存管理的一种常见模式。
 
 ```zig
 const std = @import("std");
@@ -30,7 +30,7 @@ test "allocation" {
 }
 ```
 
-The [`std.heap.FixedBufferAllocator`](https://ziglang.org/documentation/master/std/#A;std:heap.FixedBufferAllocator) is an allocator that allocates memory into a fixed buffer and does not make any heap allocations. This is useful when heap usage is not wanted, for example, when writing a kernel. It may also be considered for performance reasons. It will give you the error `OutOfMemory` if it has run out of bytes.
+[`std.heap.FixedBufferAllocator`](https://ziglang.org/documentation/master/std/#A;std:heap.FixedBufferAllocator)是一个分配器，它将内存分配到一个固定的缓冲区中，并且不进行任何堆分配。这在不需要使用堆时很有用，例如，在编写内核时。也可能是性能方面的原因。如果字节耗尽，它会给你错误`OutOfMemory`。
 
 ```zig
 test "fixed buffer allocator" {
@@ -46,7 +46,7 @@ test "fixed buffer allocator" {
 }
 ```
 
-[`std.heap.ArenaAllocator`](https://ziglang.org/documentation/master/std/#A;std:heap.ArenaAllocator) takes in a child allocator and allows you to allocate many times and only free once. Here, `.deinit()` is called on the arena, which frees all memory. Using `allocator.free` in this example would be a no-op (i.e. does nothing).
+[`std.heap.ArenaAllocator`](https://ziglang.org/documentation/master/std/#A;std:heap.ArenaAllocator)接受一个子分配器，允许你多次分配，只释放一次。在这里，`.deinit()`在竞技场上被调用，这将释放所有内存。在这个例子中使用`allocator.free`将是no-op（即什么都不做）。
 
 ```zig
 test "arena allocator" {
@@ -60,7 +60,7 @@ test "arena allocator" {
 }
 ```
 
-`alloc` and `free` are used for slices. For single items, consider using `create` and `destroy`.
+`alloc`和`free`用于切片。对于单个项，考虑使用`create`和`destroy`。
 
 ```zig
 test "allocator create/destroy" {
@@ -70,7 +70,7 @@ test "allocator create/destroy" {
 }
 ```
 
-The Zig standard library also has a general purpose allocator. This is a safe allocator which can prevent double-free, use-after-free and can detect leaks. Safety checks and thread safety can be turned off via its configuration struct (left empty below). Zig's GPA is designed for safety over performance, but may still be many times faster than page_allocator.
+Zig标准库也有一个通用的分配器。这是一个安全的分配器，可以防止双重释放，释放后使用，并可以检测泄漏。安全检查和线程安全可以通过它的配置结构（下面留空）关闭。Zig的GPA是为了安全性而不是性能而设计的，但可能仍然比page_allocator快很多倍。
 
 ```zig
 test "GPA" {
@@ -78,7 +78,7 @@ test "GPA" {
     const allocator = gpa.allocator();
     defer {
         const deinit_status = gpa.deinit();
-        //fail test; can't try in defer as defer is executed after we return
+        //失败的测试；在返回后，不能尝试在defer中执行defer
         if (deinit_status == .leak) expect(false) catch @panic("TEST FAIL");
     }
 
@@ -87,9 +87,9 @@ test "GPA" {
 }
 ```
 
-For high performance (but very few safety features!), [`std.heap.c_allocator`](https://ziglang.org/documentation/master/std/#A;std:heap.c_allocator) may be considered. This,however, has the disadvantage of requiring linking Libc, which can be done with `-lc`.
+对于高性能（但很少有安全特性！），可以考虑使用[`std.heap.c_allocator`](https://ziglang.org/documentation/master/std/#A;std:heap.c_allocator)。然而，这样做的缺点是需要链接Libc，这可以用`-lc`来完成。
 
-Benjamin Feng's talk [*What's a Memory Allocator Anyway?*](https://www.youtube.com/watch?v=vHWiDx_l4V0) goes into more detail on this topic, and covers the implementation of allocators.
+Benjamin Feng的讲座[*什么是内存分配器？*](https://www.youtube.com/watch?v=vHWiDx_l4V0)详细介绍这个主题，并介绍分配器的实现。
 
 # Arraylist
 

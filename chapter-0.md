@@ -1,5 +1,5 @@
 ---
-title: "章节零 - 开始"
+title: "第零章 - 开始"
 weight: 1
 date: 2023-09-11 18:00:00
 description: "Ziglearn - Zig编程语言的指南/教程。在这里安装并开始使用ziglang。"

@@ -1,8 +1,8 @@
 ---
-title: "Chapter 2 - Standard Patterns"
+title: "第二章 - 标准模式"
 weight: 3
 date: 2023-09-11 18:00:00
-description: "Chapter 2 - This section of the tutorial will cover the Zig programming language's standard library in detail."
+description: "第二章 - 本章将涵盖Zig语言的标准库细节。"
 ---
 
 可以在[这里](https://ziglang.org/documentation/master/std/)找到自动生成的标准库文档。安装[ZLS](https://github.com/zigtools/zls/) 还可以帮助你探索提供补全功能的标准库。
@@ -93,9 +93,9 @@ Benjamin Feng的讲座[*什么是内存分配器？*](https://www.youtube.com/wa
 
 # Arraylist
 
-The [`std.ArrayList`](https://ziglang.org/documentation/master/std/#A;std:ArrayList) is commonly used throughout Zig, and serves as a buffer which can change in size. `std.ArrayList(T)` is similar to C++'s `std::vector<T>` and Rust's `Vec<T>`. The `deinit()` method frees all of the ArrayList's memory. The memory can be read from and written to via its slice field - `.items`.
+[`std.ArrayList`](https://ziglang.org/documentation/master/std/#A;std:ArrayList)在整个Zig中都很常用，它可以作为一个大小可以改变的缓冲区。`std.ArrayList(T)`类似于C++的`std::vector<T>`和Rust的`Vec<T>`。`deinit()`方法释放了ArrayList的所有内存。内存可以通过它的切片字段——`.items`进行读写。
 
-Here we will introduce the usage of the testing allocator. This is a special allocator that only works in tests and can detect memory leaks. In your code, use whatever allocator is appropriate.
+这里我们将介绍测试分配器的用法。这是一个特殊的分配器，只在测试中工作，可以检测内存泄漏。在你的代码中，使用任何合适的分配器。
 
 ```zig
 const eql = std.mem.eql;
@@ -116,9 +116,9 @@ test "arraylist" {
 }
 ```
 
-# Filesystem
+# 文件系统
 
-Let's create and open a file in our current working directory, write to it, and then read from it. Here we have to use `.seekTo` to go back to the start of the file before reading what we have written.
+让我们在当前工作目录中创建并打开一个文件，向其写入，然后从中读取。在这里，我们必须使用`.seekTo`返回到文件的开头，然后再读取我们所写的内容。
 
 ```zig
 test "createFile, write, seekTo, read" {
@@ -139,9 +139,9 @@ test "createFile, write, seekTo, read" {
 }
 ```
 
-The functions [`std.fs.openFileAbsolute`](https://ziglang.org/documentation/master/std/#A;std:fs.openFileAbsolute) and similar absolute functions exist, but we will not test them here.
+函数[`std.fs.openFileAbsolute`](https://ziglang.org/documentation/master/std/#A;std:fs.openFileAbsolute)和类似的绝对函数是存在的，但是我们在这里不测试它们。
 
-We can get various information about files by using `.stat()` on them. `Stat` also contains fields for .inode and .mode, but they are not tested here as they rely on the current OS' types.
+通过对文件使用`.stat()`，我们可以获得关于文件的各种信息。`Stat`还包含.inode和.mode字段，但这里没有对它们进行测试，因为它们依赖于当前操作系统的类型。
 
 ```zig
 test "file stat" {
@@ -159,7 +159,7 @@ test "file stat" {
 }
 ```
 
-We can make directories and iterate over their contents. Here we will use an iterator (discussed later). This directory (and its contents) will be deleted after this test finishes.
+我们可以创建目录并遍历其内容。这里我们将使用迭代器（稍后讨论）。这个目录（及其内容）将在测试结束后被删除。
 
 ```zig
 test "make dir" {
@@ -187,9 +187,9 @@ test "make dir" {
 }
 ```
 
-# Readers and Writers
+# Reader和Writer
 
-[`std.io.Writer`](https://ziglang.org/documentation/master/std/#A;std:io.Writer) and [`std.io.Reader`](https://ziglang.org/documentation/master/std/#A;std:io.Reader) provide standard ways of making use of IO. `std.ArrayList(u8)` has a `writer` method which gives us a writer. Let's use it.
+[`std.io.Writer`](https://ziglang.org/documentation/master/std/#A;std:io.Writer)和[`std.io.Reader`](https://ziglang.org/documentation/master/std/#A;std:io.Reader)提供了使用IO的标准方法。`std.ArrayList(u8)`有一个`writer`方法，它提供了一个写入器。让我们用它。
 
 ```zig
 test "io writer usage" {
@@ -203,7 +203,7 @@ test "io writer usage" {
 }
 ```
 
-Here we will use a reader to copy the file's contents into an allocated buffer. The second argument of [`readAllAlloc`](https://ziglang.org/documentation/master/std/#A;std:io.Reader.readAllAlloc) is the maximum size that it may allocate; if the file is larger than this, it will return `error.StreamTooLong`.
+这里我们将使用读取器将文件的内容复制到已分配的缓冲区中。[`readAllAlloc`](https://ziglang.org/documentation/master/std/#A;std:io.Reader.readAllAlloc)的第二个参数是它可以分配的最大大小；如果文件比这个大，它将返回`error.StreamTooLong`。
 
 ```zig
 test "io reader usage" {
@@ -228,7 +228,7 @@ test "io reader usage" {
 }
 ```
 
-A common usecase for readers is to read until the next line (e.g. for user input). Here we will do this with the [`std.io.getStdIn()`](https://ziglang.org/documentation/master/std/#A;std:io.getStdIn) file.
+读取器的一个常见用例是读取到下一行（例如用户输入）。在这里，我们将使用[`std.io.getStdIn()`](https://ziglang.org/documentation/master/std/#A;std:io.getStdIn)文件完成此操作。
 
 ```zig
 fn nextLine(reader: anytype, buffer: []u8) !?[]const u8 {
@@ -236,7 +236,7 @@ fn nextLine(reader: anytype, buffer: []u8) !?[]const u8 {
         buffer,
         '\n',
     )) orelse return null;
-    // trim annoying windows-only carriage return character
+    // 删除恼人的windows特有回车符
     if (@import("builtin").os.tag == .windows) {
         return std.mem.trimRight(u8, line, "\r");
     } else {
@@ -261,11 +261,11 @@ test "read until next line" {
 }
 ```
 
-An [`std.io.Writer`](https://ziglang.org/documentation/master/std/#A;std:io.Writer) type consists of a context type, error set, and a write function. The write function must take in the context type and a byte slice. The write function must also return an error union of the Writer type's error set and the number of bytes written. Let's create a type that implements a writer.
+[`std.io.Writer`](https://ziglang.org/documentation/master/std/#A;std:io.Writer)类型包括上下文类型、错误集和写函数。写函数必须接受上下文类型和字节切片。write函数还必须返回Writer类型的错误集和写入字节数的错误联合。让我们创建一个实现写入器的类型。
 
 ```zig
-// Don't create a type like this! Use an
-// arraylist with a fixed buffer allocator
+// 不要创建这样的类型！使用一个
+// 带有固定缓冲区分配器的数组列表
 const MyByteList = struct {
     data: [100]u8 = undefined,
     items: []u8 = &[_]u8{},
@@ -305,11 +305,11 @@ test "custom writer" {
 }
 ```
 
-# Formatting
+# 格式化
 
-[`std.fmt`](https://ziglang.org/documentation/master/std/#A;std:fmt) provides ways to format data to and from strings.
+[`std.fmt`](https://ziglang.org/documentation/master/std/#A;std:fmt) 提供了格式化字符串数据的方法。
 
-A basic example of creating a formatted string. The format string must be compile time known. The `d` here denotes that we want a decimal number.
+创建格式化字符串的基本示例。格式字符串必须是编译时已知的。这里的`d`表示我们需要一个十进制数。
 
 ```zig
 test "fmt" {
@@ -324,7 +324,7 @@ test "fmt" {
 }
 ```
 
-Writers conveniently have a `print` method, which works similarly.
+Writer方便地使用`print`方法，其工作原理类似。
 
 ```zig
 test "print" {
@@ -338,7 +338,7 @@ test "print" {
 }
 ```
 
-Take a moment to appreciate that you now know from top to bottom how printing Hello World works. [`std.debug.print`](https://ziglang.org/documentation/master/std/#A;std:debug.print) works the same, except it writes to stderr and is protected by a mutex.
+花点时间欣赏一下，你现在已经从上到下了解了打印Hello World的工作原理。[`std.debug.print`](https://ziglang.org/documentation/master/std/#A;std:debug.print)的工作原理相同，除了它写到stderr，并由互斥锁保护。
 
 ```zig
 test "hello world" {
@@ -350,7 +350,7 @@ test "hello world" {
 }
 ```
 
-We have used the `{s}` format specifier up until this point to print strings. Here, we will use `{any}`, which gives us the default formatting.
+到目前为止，我们已经使用了`{s}`格式说明符来打印字符串。在这里，我们将使用`{any}`，它给了我们默认格式。
 
 ```zig
 test "array printing" {
@@ -373,7 +373,7 @@ test "array printing" {
 }
 ```
 
-Let's create a type with custom formatting by giving it a `format` function. This function must be marked as `pub` so that std.fmt can access it (more on packages later). You may notice the usage of `{s}` instead of `{}` - this is the format specifier for strings (more on format specifiers later). This is used here as `{}` defaults to array printing over string printing.
+让我们通过给一个`format`函数来创建一个自定义格式的类型。此函数必须标记为`pub`，以便std.fmt可以访问它（稍后将详细介绍包）。你可能会注意到使用`{s}`而不是`{}`——这是字符串的格式说明符（更多格式说明符在稍后）。在这里，`{}`默认为数组打印而不是字符串打印。
 
 ```zig
 const Person = struct {
@@ -444,7 +444,7 @@ test "custom fmt" {
 
 # JSON
 
-Let's parse a JSON string into a struct type, using the streaming parser.
+让我们使用流解析器将JSON字符串解析为结构类型。
 
 ```zig
 const Place = struct { lat: f32, long: f32 };
@@ -466,7 +466,7 @@ test "json parse" {
 }
 ```
 
-And using stringify to turn arbitrary data into a string.
+并使用stringify将任意数据转换为字符串。
 
 ```zig
 test "json stringify" {
@@ -486,7 +486,7 @@ test "json stringify" {
 }
 ```
 
-The JSON parser requires an allocator for javascript's string, array, and map types.
+JSON解析器需要为javascript的字符串、数组和映射类型分配一个分配器。
 
 ```zig
 test "json parse with strings" {
@@ -504,9 +504,9 @@ test "json parse with strings" {
 }
 ```
 
-# Random Numbers
+# 随机数
 
-Here ,we create a new prng using a 64 bit random seed. a, b, c, and d are given random values via this prng. The expressions giving c and d values are equivalent. `DefaultPrng` is `Xoroshiro128`; there are other prngs available in std.rand.
+这里，我们使用64位随机种子创建一个新的prng。a、b、c和d是通过这个prng给出的随机值。给出的表达式c和d值是相等的。`DefaultPrng`是`Xoroshiro128`；在std.rand中还有其他可用的prng。
 
 ```zig
 test "random numbers" {
@@ -522,12 +522,12 @@ test "random numbers" {
     const c = rand.int(u8);
     const d = rand.intRangeAtMost(u8, 0, 255);
 
-    //suppress unused constant compile error
+    //禁止未使用的常量编译错误
     _ = .{ a, b, c, d };
 }
 ```
 
-Cryptographically secure random is also available.
+加密安全随机也是可用的。
 
 ```zig
 test "crypto random numbers" {
@@ -538,26 +538,26 @@ test "crypto random numbers" {
     const c = rand.int(u8);
     const d = rand.intRangeAtMost(u8, 0, 255);
 
-    //suppress unused constant compile error
+    //禁止未使用的常量编译错误
     _ = .{ a, b, c, d };
 }
 ```
 
-# Crypto
+# 加密
 
-[`std.crypto`](https://ziglang.org/documentation/master/std/#A;std:crypto) includes many cryptographic utilities, including:
--  AES (Aes128, Aes256)
--  Diffie-Hellman key exchange (x25519)
--  Elliptic-curve arithmetic (curve25519, edwards25519, ristretto255)
--  Crypto secure hashing (blake2, Blake3, Gimli, Md5, sha1, sha2, sha3)
--  MAC functions (Ghash, Poly1305)
--  Stream ciphers (ChaCha20IETF, ChaCha20With64BitNonce, XChaCha20IETF, Salsa20, XSalsa20)
+[`std.crypto`](https://ziglang.org/documentation/master/std/#A;std:crypto)包含许多加密实用程序，包括：
+-  AES（Aes128、Aes256）
+-  Diffie-Hellman密钥交换（x25519）
+-  椭圆曲线算法（curve25519、edwards25519、ristretto255）
+-  加密安全散列（blake2、Blake3、Gimli、Md5、sha1、sha2、sha3）
+-  MAC函数（Ghash、Poly1305）
+-  流密码（ChaCha20IETF、ChaCha20With64BitNonce、XChaCha20IETF、Salsa20、XSalsa20）
 
-This list is inexhaustive. For more in-depth information, try [A tour of std.crypto in Zig 0.7.0 - Frank Denis](https://www.youtube.com/watch?v=9t6Y7KoCvyk).
+这个列表是不详尽的。要了解更深入的信息，请尝试看看[A tour of std.crypto in Zig 0.7.0 - Frank Denis](https://www.youtube.com/watch?v=9t6Y7KoCvyk)。
 
-# Threads
+# 线程
 
-While Zig provides more advanced ways of writing concurrent and parallel code, [`std.Thread`](https://ziglang.org/documentation/master/std/#A;std:Thread) is available for making use of OS threads. Let's make use of an OS thread.
+虽然Zig提供了更高级的编写并发和并行代码的方法，但[`std.Thread`](https://ziglang.org/documentation/master/std/#A;std:Thread)也可用于利用操作系统线程。让我们利用一个操作系统线程。
 
 ```zig
 fn ticker(step: u8) void {
@@ -578,13 +578,13 @@ test "threading" {
 }
 ```
 
-Threads, however, aren't particularly useful without strategies for thread safety.
+但是，如果没有线程安全策略，线程就不是特别有用。
 
-# Hash Maps
+# 散列映射
 
-The standard library provides [`std.AutoHashMap`](https://ziglang.org/documentation/master/std/#A;std:AutoHashMap), which lets you easily create a hash map type from a key type and a value type. These must be initiated with an allocator.
+标准库提供了[`std.AutoHashMap`](https://ziglang.org/documentation/master/std/#A;std:AutoHashMap)，它允许你轻松地从键类型和值类型创建散列映射类型。这必须用到分配器。
 
-Let's put some values in a hash map.
+让我们把一些值放到哈希映射中。
 
 ```zig
 test "hashing" {
@@ -615,7 +615,7 @@ test "hashing" {
 }
 ```
 
-`.fetchPut` puts a value in the hash map, returning a value if there was previously a value for that key.
+`.fetchPut`将一个值放入哈希映射中，如果该键先前有值，则返回一个值。
 
 ```zig
 test "fetchPut" {
@@ -632,7 +632,7 @@ test "fetchPut" {
 }
 ```
 
-[`std.StringHashMap`](https://ziglang.org/documentation/master/std/#A;std:StringHashMap) is also provided for when you need strings as keys.
+当你需要字符串作为键时，还提供了[`std.StringHashMap`](https://ziglang.org/documentation/master/std/#A;std:StringHashMap)。
 
 ```zig
 test "string hashmap" {
@@ -649,13 +649,13 @@ test "string hashmap" {
 }
 ```
 
-[`std.StringHashMap`](https://ziglang.org/documentation/master/std/#A;std:StringHashMap) and [`std.AutoHashMap`](https://ziglang.org/documentation/master/std/#A;std:AutoHashMap) are just wrappers for [`std.HashMap`](https://ziglang.org/documentation/master/std/#A;std:HashMap). If these two do not fulfil your needs, using [`std.HashMap`](https://ziglang.org/documentation/master/std/#A;std:HashMap) directly gives you much more control.
+[`std.StringHashMap`](https://ziglang.org/documentation/master/std/#A;std:StringHashMap)和[`std.AutoHashMap`](https://ziglang.org/documentation/master/std/#A;std:AutoHashMap)只是[`std.HashMap`](https://ziglang.org/documentation/master/std/#A;std:HashMap)的包装。如果这两种方法不能满足你的需求，那么直接使用[`std.HashMap`](https://ziglang.org/documentation/master/std/#A;std:HashMap)可以为你提供更多的控制。
 
-If having your elements backed by an array is wanted behaviour, try [`std.ArrayHashMap`](https://ziglang.org/documentation/master/std/#A;std:ArrayHashMap) and its wrapper [`std.AutoArrayHashMap`](https://ziglang.org/documentation/master/std/#A;std:AutoArrayHashMap).
+如果你的元素由数组支持是需要的行为，请尝试[`std.ArrayHashMap`](https://ziglang.org/documentation/master/std/#A;std:ArrayHashMap)及其包装器[`std.AutoArrayHashMap`](https://ziglang.org/documentation/master/std/#A;std:AutoArrayHashMap)。
 
-# Stacks
+# 栈
 
-[`std.ArrayList`](https://ziglang.org/documentation/master/std/#A;std:ArrayList) provides the methods necessary to use it as a stack. Here's an example of creating a list of matched brackets.
+[`std.ArrayList`](https://ziglang.org/documentation/master/std/#A;std:ArrayList)提供了将其用作堆栈所需的方法。下面是创建匹配括号列表的示例。
 
 ```zig
 test "stack" {
@@ -691,9 +691,9 @@ test "stack" {
 }
 ```
 
-# Sorting
+# 排序
 
-The standard library provides utilities for in-place sorting slices. Its basic usage is as follows.
+标准库提供了用于就地排序片的实用程序。其基本用法如下。
 
 ```zig
 test "sorting" {
@@ -705,15 +705,15 @@ test "sorting" {
 }
 ```
 
-[`std.sort.asc`](https://ziglang.org/documentation/master/std/#A;std:sort.asc) and [`.desc`](https://ziglang.org/documentation/master/std/#A;std:sort.desc) create a comparison function for the given type at comptime; if non-numerical types should be sorted, the user must provide their own comparison function.
+[`std.sort.asc`](https://ziglang.org/documentation/master/std/#A;std:sort.asc)和[`.desc`](https://ziglang.org/documentation/master/std/#A;std:sort.desc)在运行时为给定类型创建一个比较函数；如果非数值类型需要排序，用户必须提供自己的比较函数。
 
-[`std.sort.sort`](https://ziglang.org/documentation/master/std/#A;std:sort.sort) has a best case of O(n), and an average and worst case of O(n*log(n)).
+[`std.sort.sort`](https://ziglang.org/documentation/master/std/#A;std:sort.sort)的最佳情况为O(n)，平均和最差情况为O(n*log(n))。
 
-# Iterators
+# 迭代器
 
-It is a common idiom to have a struct type with a `next` function with an optional in its return type, so that the function may return a null to indicate that iteration is finished.
+一个常见的习惯用法是，在一个结构类型中有一个`next`函数，它的返回类型是可选的，这样函数就可以返回一个null来表示迭代已经结束。
 
-[`std.mem.SplitIterator`](https://ziglang.org/documentation/master/std/#A;std:mem.SplitIterator) (and the subtly different [`std.mem.TokenIterator`](https://ziglang.org/documentation/master/std/#A;std:mem.TokenIterator)) is an example of this pattern.
+[`std.mem.SplitIterator`](https://ziglang.org/documentation/master/std/#A;std:mem.SplitIterator)（和略有不同的[`std.mem.TokenIterator`](https://ziglang.org/documentation/master/std/#A;std:mem.TokenIterator)）就是这种模式的一个例子。
 ```zig
 test "split iterator" {
     const text = "robust, optimal, reusable, maintainable, ";
@@ -727,7 +727,7 @@ test "split iterator" {
 }
 ```
 
-Some iterators have a `!?T` return type, as opposed to ?T. `!?T` requires that we unpack the error union before the optional, meaning that the work done to get to the next iteration may error. Here is an example of doing this with a loop. [`cwd`](https://ziglang.org/documentation/master/std/#std;fs.cwd) has to be opened with iterate permissions in order for the directory iterator to work.
+有些迭代器有`!?T`返回类型，而不是?T。`!?T`要求我们在可选的之前解包错误联合，这意味着为到达下一个迭代所做的工作可能会出错。下面是一个使用循环执行此操作的示例。为了使目录迭代器工作，必须使用迭代权限打开[`cwd`](https://ziglang.org/documentation/master/std/#std;fs.cwd)。
 
 ```zig
 test "iterator looping" {
@@ -745,7 +745,7 @@ test "iterator looping" {
 }
 ```
 
-Here we will implement a custom iterator. This will iterate over a slice of strings, yielding the strings which contain a given string.
+这里我们将实现一个自定义迭代器。这将迭代字符串切片，生成包含给定字符串的字符串。
 
 ```zig
 const ContainsIterator = struct {
@@ -776,10 +776,10 @@ test "custom iterator" {
 }
 ```
 
-# Formatting specifiers
-[`std.fmt`](https://ziglang.org/documentation/master/std/#std;fmt) provides options for formatting various data types.
+# 格式说明符
+[`std.fmt`](https://ziglang.org/documentation/master/std/#std;fmt)提供了格式化各种数据类型的选项。
 
-`std.fmt.fmtSliceHexLower` and `std.fmt.fmtSliceHexUpper` provide hex formatting for strings as well as `{x}` and `{X}` for ints.
+`std.fmt.fmtSliceHexLower`和`std.fmt.fmtSliceHexUpper`为字符串提供十六进制格式，为整数提供`{x}`和`{X}`。
 ```zig
 const bufPrint = std.fmt.bufPrint;
 
@@ -797,7 +797,7 @@ test "hex" {
 }
 ```
 
-`{d}` performs decimal formatting for numeric types.
+`{d}`对数字类型执行十进制格式化。
 
 ```zig
 test "decimal float" {
@@ -810,7 +810,7 @@ test "decimal float" {
 }
 ```
 
-`{c}` formats a byte into an ascii character.
+`{c}`将字节格式化为ascii字符。
 ```zig
 test "ascii fmt" {
     var b: [1]u8 = undefined;
@@ -819,7 +819,7 @@ test "ascii fmt" {
 }
 ```
 
-`std.fmt.fmtIntSizeDec` and `std.fmt.fmtIntSizeBin` output memory sizes in metric (1000) and power-of-two (1024) based notation.
+`std.fmt.fmtIntSizeDec`和`std.fmt.fmtIntSizeBin`以公制（1000）和2次幂（1024）为基础的表示法输出内存大小。
 
 ```zig
 test "B Bi" {
@@ -844,7 +844,7 @@ test "B Bi" {
 }
 ```
 
-`{b}` and `{o}` output integers in binary and octal format.
+`{b}`和`{o}`以二进制和八进制格式输出整数。
 
 ```zig
 test "binary, octal fmt" {
@@ -864,7 +864,7 @@ test "binary, octal fmt" {
 }
 ```
 
-`{*}` performs pointer formatting, printing the address rather than the value.
+`{*}`执行指针格式化，打印地址而不是值。
 ```zig
 test "pointer fmt" {
     var b: [16]u8 = undefined;
@@ -876,7 +876,7 @@ test "pointer fmt" {
 }
 ```
 
-`{e}` outputs floats in scientific notation.
+`{e}`以科学记数法输出浮点数。
 ```zig
 test "scientific" {
     var b: [16]u8 = undefined;
@@ -889,7 +889,7 @@ test "scientific" {
 }
 ```
 
-`{s}` outputs strings.
+`{s}`输出字符串。
 ```zig
 test "string fmt" {
     var b: [6]u8 = undefined;
@@ -903,25 +903,25 @@ test "string fmt" {
 }
 ```
 
-This list is non-exhaustive.
+这个列表并未详尽。
 
-# Advanced Formatting
+# 高级格式化
 
-So far we have only covered formatting specifiers. Format strings actually follow this format, where between each pair of square brackets is a parameter you have to replace with something.
+到目前为止，我们只讨论了格式化说明符。格式字符串实际上遵循这种格式，在每对方括号之间是一个参数，你必须用某些东西替换。
 
 `{[position][specifier]:[fill][alignment][width].[precision]}`
 
-| Name      | Meaning                                                                                 |
+| 名字      | 意义                                                                                 |
 |-----------|-----------------------------------------------------------------------------------------|
-| Position  | The index of the argument that should be inserted                                       |
-| Specifier | A type-dependent formatting option                                                      |
-| Fill      | A single character used for padding                                                     |
-| Alignment | One of three characters '<', '^' or '>'; these are for left, middle and right alignment |
-| Width     | The total width of the field (characters)                                               |
-| Precision | How many decimals a formatted number should have                                        |
+| Position  | 要插入参数的索引                                       |
+| Specifier | 与类型相关的格式化选项                                                      |
+| Fill      | 用于填充的单个字符                                                     |
+| Alignment | '<'、'^'或'>'之一，代表左、中及右对齐 |
+| Width     | 字段的总宽度（字符）                                               |
+| Precision | 一个格式化的数字应该有多少位小数                                        |
 
 
-Position usage.
+位置使用。
 ```zig
 test "position" {
     var b: [3]u8 = undefined;
@@ -933,7 +933,7 @@ test "position" {
 }
 ```
 
-Fill, alignment and width being used.
+填充、对齐和宽度正在使用。
 ```zig
 test "fill, alignment, width" {
     var b: [6]u8 = undefined;
@@ -958,7 +958,7 @@ test "fill, alignment, width" {
 }
 ```
 
-Using a specifier with precision.
+使用具有精度的说明符。
 ```zig
 test "precision" {
     var b: [4]u8 = undefined;
@@ -970,16 +970,16 @@ test "precision" {
 }
 ```
 
-# End of Chapter 2
+# 第二章结束
 
-This chapter is incomplete. In the future, it will contain things such as:
+本章未完。在未来，它将包含如下内容：
 
-- Arbitrary Precision Maths
-- Linked Lists
-- Queues
-- Mutexes
-- Atomics
-- Searching
-- Logging
+- 任意精度数学
+- 链表
+- 队列
+- 互斥锁
+- 原子
+- 搜索
+- 日志
 
-Feedback and PRs are welcome.
+欢迎反馈和PR。

@@ -1,13 +1,13 @@
 ---
-title: "Chapter 3 - Build system"
+title: "第三章 - 构建系统"
 weight: 4
 date: 2021-02-12 12:49:00
-description: "Chapter 3 - Ziglang's build system in detail."
+description: "第三章 - Zig语言的构建系统细节。"
 ---
 
-# Build Modes  
+# 构建模式
 
-Zig provides four build modes, with debug being the default as it produces the shortest compile times.
+Zig提供了四种构建模式，其中调试是默认模式，因为它产生的编译时间最短。
 
 |               | Runtime Safety | Optimizations |
 |---------------|----------------|---------------|
@@ -16,20 +16,20 @@ Zig provides four build modes, with debug being the default as it produces the s
 | ReleaseSmall | No             | Yes, Size     |
 | ReleaseFast  | No             | Yes, Speed    |
 
-These may be enabled in `zig run` and `zig test` with the arguments `-O ReleaseSafe`, `-O ReleaseSmall` and `-O ReleaseFast`.
+这些可以通过参数`-O ReleaseSafe`、`-O ReleaseSmall`和`-O ReleaseFast`在`zig run`和`zig test`中启用。
 
-Users are recommended to develop their software with runtime safety enabled, despite its small speed disadvantage.
+建议用户在开发软件时启用运行时安全性，尽管它在速度上的缺点很小。
 
-# Outputting an Executable
+# 输出可执行文件
 
-The commands `zig build-exe`, `zig build-lib`, and `zig build-obj` can be used to output executables, libraries and objects, respectively. These commands take in a source file and arguments.
+命令`zig build-exe`、`zig build-lib`和`zig build-obj`可分别用于输出可执行文件、库和对象。这些命令接受源文件和参数。
 
-Some common arguments:
-- `-fsingle-threaded`, which asserts the binary is single-threaded. This will turn thread safety measures such as mutexes into no-ops.
-- `-fstrip`, which removes debug info from the binary.
-- `--dynamic`, which is used in conjunction with `zig build-lib` to output a dynamic/shared library.
+一些常见的参数：
+- `-fsingle-threaded`，它断言二进制文件是单线程的。这将使线程安全措施（如互斥锁）变为无操作。
+- `-fstrip`，从二进制文件中删除调试信息。
+- `--dynamic`，它与`zig build-lib`一起用于输出动态/共享库。
 
-Let's create a tiny hello world. Save this as `tiny-hello.zig`, and run `zig build-exe .\tiny-hello.zig -O ReleaseSmall -fstrip -fsingle-threaded`. Currently for `x86_64-windows`, this produces a 2.5KiB executable.
+让我们创建一个小小的hello world。将此保存为`tiny-hello.zig`。然后运行`zig build-exe .\tiny-hello.zig -O ReleaseSmall -fstrip -fsingle-threaded`。目前对于`x86_64-windows`，这将生成一个2.5KiB的可执行文件。
 
 <!--no_test-->
 ```zig
@@ -42,15 +42,15 @@ pub fn main() void {
 }
 ```
 
-# Cross compilation
+# 交叉编译
 
-By default, Zig will compile for your combination of CPU and OS. This can be overridden by `-target`. Let's compile our tiny hello world to a 64 bit arm linux platform.
+默认情况下，Zig将针对你的CPU和操作系统组合进行编译。这可以被`-target`覆盖。让我们将这个小小的hello world编译为64位arm linux平台。
 
 `zig build-exe .\tiny-hello.zig -O ReleaseSmall -fstrip -fsingle-threaded -target aarch64-linux`
 
-[QEMU](https://www.qemu.org/) or similar may be used to conveniently test executables made for foreign platforms.
+[QEMU](https://www.qemu.org/)或类似的工具可以用来方便地测试为其他平台制作的可执行文件。
 
-Some CPU architectures that you can cross-compile for:
+一些可以交叉编译的CPU架构：
 - `x86_64`
 - `arm`
 - `aarch64`
@@ -58,7 +58,7 @@ Some CPU architectures that you can cross-compile for:
 - `riscv64`
 - `wasm32`
 
-Some operating systems you can cross-compile for:
+有些操作系统可以交叉编译：
 - `linux`
 - `macos`
 - `windows`
@@ -67,28 +67,28 @@ Some operating systems you can cross-compile for:
 - `dragonfly`
 - `UEFI`
 
-Many other targets are available for compilation, but aren't as well tested as of now. See [Zig's support table](https://ziglang.org/learn/overview/#wide-range-of-targets-supported) for more information; the list of well tested targets is slowly expanding.
+许多其他目标也可用于编译，但目前还没有经过很好的测试。有关更多信息，请参阅[Zig's support table](https://ziglang.org/learn/overview/#wide-range-of-targets-supported)；经过良好测试的目标名单正在慢慢扩大。
 
-As Zig compiles for your specific CPU by default, these binaries may not run on other computers with slightly different CPU architectures. It may be useful to instead specify a specific baseline CPU model for greater compatibility. Note: choosing an older CPU architecture will bring greater compatibility, but means you also miss out on newer CPU instructions; there is an efficiency/speed versus compatibility trade-off here.
+由于Zig默认为特定的CPU编译，因此这些二进制文件可能无法在CPU体系结构略有不同的其他计算机上运行。为获得更好的兼容性，指定一个特定的基准CPU模型可能会更有用。注意：选择较旧的CPU架构将带来更好的兼容性，但也意味着你也错过了较新的CPU指令；这里存在效率/速度与兼容性之间的权衡。
 
-Let's compile a binary for a sandybridge CPU (Intel x86_64, circa 2011), so we can be reasonably sure that someone with an x86_64 CPU can run our binary. Here we can use `native` in place of our CPU or OS, to use our system's.
+让我们为sandybridge CPU（Intel x86_64，大约2011年）编译一个二进制文件，这样我们就可以合理地确定使用x86_64 CPU的人可以运行我们的二进制文件。这里我们可以使用`native`来代替我们的CPU或OS，来使用我们的系统。
 
 `zig build-exe .\tiny-hello.zig -target x86_64-native -mcpu sandybridge`
 
-Details on what architectures, OSes, CPUs and ABIs (details on ABIs in the next chapter) are available can be found by running `zig targets`. Note: the output is long, and you may want to pipe it to a file, e.g. `zig targets > targets.json`.
+关于哪些架构、操作系统、CPU和ABI可用的详细信息（关于ABI的详细信息将在下一章中介绍）可以通过运行`zig targets`找到。注意：输出很长，你可能想把它管道到一个文件，例如：`zig targets > targets.json`。
 
-# Zig Build
+# Zig构建
 
-The `zig build` command allows users to compile based on a `build.zig` file. `zig init-exe` and `zig init-lib` can be used to give you a baseline project.
+`zig build`命令允许用户基于构建进行编译`build.zig`文件。`zig init-exe`和`zig init-lib`可以用来给你一个基线项目。
 
-Let's use `zig init-exe` inside a new folder. This is what you will find.
+让我们在一个新文件夹中使用`zig init-exe`。你就会发现这个。
 ```
 .
 ├── build.zig
 └── src
     └── main.zig
 ```
-`build.zig` contains our build script. The *build runner* will use this `pub fn build` function as its entry point - this is what is executed when you run `zig build`.
+`build.zig`包含我们的构建脚本。*build runner*将使用这个`pub fn build`函数作为它的入口点——这是在运行`zig build`时执行的。
 
 <!--no_test-->
 ```zig
@@ -164,7 +164,7 @@ pub fn build(b: *std.Build) void {
 }
 ```
 
-`main.zig` contains our executable's entry point.
+`main.zig`包含我们的可执行文件的入口点。
 
 <!--no_test-->
 ```zig
@@ -194,23 +194,23 @@ test "simple test" {
 }
 ```
 
-Upon using the `zig build` command, the executable will appear in the install path. Here we have not specified an install path, so the executable will be saved in `./zig-out/bin`. A custom install path can be specified using the `override_dest_dir` field in the `Step.Compile` struct.
+使用`zig build`命令后，可执行文件将出现在安装路径中。这里我们没有指定安装路径，因此可执行文件将保存在`./zig-out/bin`中。可以使用`Step.Compile`结构中的`override_dest_dir`字段指定自定义安装路径。
 
-# Builder
+# 构建器
 
-Zig's [`std.Build`](https://ziglang.org/documentation/master/std/#A;std:Build) type contains the information used by the build runner. This includes information such as:
+Zig的[`std.Build`](https://ziglang.org/documentation/master/std/#A;std:Build)类型包含构建运行程序使用的信息。这包括以下信息：
 
-- the build target
-- the release mode
-- locations of libraries
-- the install path
-- build steps
+- 构建目标
+- 发布模式
+- 库位置
+- 安装路径
+- 构建步骤
 
 # CompileStep
 
-The `std.build.CompileStep` type contains information required to build a library, executable, object, or test.
+`std.build.CompileStep` 类型包含构建库、可执行文件、对象或测试所需的信息。
 
-Let's make use of our `Builder` and create a `CompileStep` using `Builder.addExecutable`, which takes in a name and a path to the root of the source.
+让我们利用`Builder`并使用`Builder.addExecutable`创建一个`CompileStep`。它接受一个名称和到源的根目录的路径。
 
 <!--no_test-->
 ```zig
@@ -225,11 +225,11 @@ pub fn build(b: *Builder) void {
 }
 ```
 
-# Modules
+# 模块
 
-The Zig build system has the concept of modules, which are other source files written in Zig. Let's make use of a module.
+Zig构建系统有模块的概念，它是用Zig编写的其他源文件。让我们利用一个模块。
 
-From a new folder, run the following commands.
+在一个新文件夹中，运行以下命令。
 ```
 zig init-exe
 mkdir libs
@@ -237,7 +237,7 @@ cd libs
 git clone https://github.com/Sobeston/table-helper.git
 ```
 
-Your directory structure should be as follows.
+你的目录结构应该如下所示。
 
 ```
 .
@@ -252,7 +252,7 @@ Your directory structure should be as follows.
     └── main.zig
 ```
 
-To your newly made `build.zig`, add the following lines.
+为你的新创建的`build.zig`，添加以下行。
 
 <!--no_test-->
 ```zig
@@ -262,9 +262,9 @@ To your newly made `build.zig`, add the following lines.
     exe.addModule("table-helper", table_helper);
 ```
 
-Now when run via `zig build`, [`@import`](https://ziglang.org/documentation/master/#import) inside your `main.zig` will work with the string "table-helper". This means that main has the table-helper package. Packages (type [`std.build.Pkg`](https://ziglang.org/documentation/master/std/#std;build.Pkg)) also have a field for dependencies of type `?[]const Pkg`, which is defaulted to null. This allows you to have packages which rely on other packages. 
+现在，当通过`zig build`运行时，[`@import`](https://ziglang.org/documentation/master/#import)在`main.zig`中将使用字符串“table-helper”。这意味着main具有table-helpe包。包（类型[`std.build.Pkg`](https://ziglang.org/documentation/master/std/#std;build.Pkg)）也有一个字段用于类型`?[]const Pkg`的依赖项，默认为null。这允许你拥有依赖于其他包的包。
 
-Place the following inside your `main.zig` and run `zig build run`. 
+将以下内容放入`main.zig`文件中，并运行`zig build run`。
 
 <!--no_test-->
 ```zig
@@ -285,7 +285,7 @@ pub fn main() !void {
 }
 ```
 
-This should print this table to your console.
+这会将该表打印到控制台中。
 
 ```
 Version Date       
@@ -297,13 +297,13 @@ Version Date
 ```
 
 
-Zig does not yet have an official package manager. Some unofficial experimental package managers however do exist, namely [gyro](https://github.com/mattnite/gyro) and [zigmod](https://github.com/nektro/zigmod). The `table-helper` package is designed to support both of them.
+Zig还没有正式的包管理器。然而，一些非官方的实验包管理器确实存在，即[gyro](https://github.com/mattnite/gyro)和[zigmod](https://github.com/nektro/zigmod)。`table-helper` 包被设计为支持这两种方法。
 
-Some good places to find packages include: [astrolabe.pm](https://astrolabe.pm), [zpm](https://zpm.random-projects.net/), [awesome-zig](https://github.com/nrdmn/awesome-zig/), and the [zig tag on GitHub](https://github.com/topics/zig).
+一些找到包的好地方包括：[astrolabe.pm](https://astrolabe.pm)、[zpm](https://zpm.random-projects.net/)、[awesome-zig](https://github.com/nrdmn/awesome-zig/)，以及[GitHub上的zig标签](https://github.com/topics/zig)。
 
-# Build steps
+# 构建步骤
 
-Build steps are a way of providing tasks for the build runner to  execute. Let's create a build step, and make it the default. When you run `zig build` this will output `Hello!`. 
+构建步骤是为构建运行程序提供要执行的任务的一种方式。让我们创建一个构建步骤，并将其设为默认值。当你运行`zig build`时，它将输出`Hello!`。
 
 <!--no_test-->
 ```zig
@@ -322,19 +322,19 @@ fn myTask(self: *std.build.Step, progress: *std.Progress.Node) !void {
 }
 ```
 
-We called `b.installArtifact(exe)` earlier - this adds a build step which tells the builder to build the executable.
+我们之前调用了`b.installArtifact(exe)`——这添加了一个构建步骤，告诉构建器构建可执行文件。
 
-# Generating Documentation
+# 生成文档
 
-The Zig compiler comes with automatic documentation generation. This can be invoked by adding `-femit-docs` to your `zig build-{exe, lib, obj}` or `zig run` command. This documentation is saved into `./docs`, as a small static website.
+Zig编译器自带自动文档生成功能。这可以通过在`zig build-{exe, lib, obj}`或`zig run`命令中添加`-femit-docs`来调用。这个文档保存在`./docs`中，作为一个小的静态网站。
 
-Zig's documentation generation makes use of *doc comments* which are similar to comments, using `///` instead of `//`, and preceding globals.
+Zig的文档生成使用类似于注释的*文档注释*，使用`///`而不是`//`和前面的全局变量。
 
-Here we will save this as `x.zig` and build documentation for it with `zig build-lib -femit-docs x.zig -target native-windows`. There are some things to take away here:
--  Only things that are public with a doc comment will appear
--  Blank doc comments may be used
--  Doc comments can make use of subset of markdown
--  Things will only appear inside generated documentation if the compiler analyses them; you may need to force analysis to happen to get things to appear.
+这里我们将把它保存为`x.zig`，并使用`zig build-lib -femit-docs x.zig -target native-windows`为其构建文档。这里有一些值得借鉴的地方：
+-  只有带有文档注释的公开内容才会出现
+-  可以使用空白文档注释
+-  文档注释可以利用markdown的子集
+-  只有当编译器分析它们时，才会出现在生成的文档中；你可能需要强迫分析发生，以使事情出现。
 
 <!--no_test-->
 ```zig
@@ -376,7 +376,7 @@ test "Force analysis" {
 }
 ```
 
-When using a `build.zig` this may be invoked by setting the `emit_docs` field to `.emit` on a `CompileStep`. We can create a build step to generate docs as follows and invoke it with `$ zig build docs`.
+使用`build.zig`时。这可以通过在`CompileStep`中将`emit_docs`字段设置为`.emit`来调用。我们可以创建一个生成文档的构建步骤，如下所示，并使用`$ zig build docs`调用它。
 
 <!--no_test-->
 ```zig
@@ -405,9 +405,9 @@ pub fn build(b: *std.build.Builder) void {
 }
 ```
 
-This generation is experimental, and often fails with complex examples. This is used by the [standard library documentation](https://ziglang.org/documentation/master/std/).
+这个生成器是实验性的，在复杂的例子上经常失败。目前为[标准库文档](https://ziglang.org/documentation/master/std/)所用。
 
-When merging error sets, the left-most error set's documentation strings take priority over the right. In this case, the doc comment for `C.PathNotFound` is the doc comment provided in `A`.
+合并错误集时，最左边的错误集的文档字符串优先于右边的。在这种情况下，`C.PathNotFound`的文档注释是`A`中提供的文档注释。
 
 <!--no_test-->
 ```zig
@@ -427,8 +427,8 @@ const B = error{
 const C = A || B;
 ```
 
-# End of Chapter 3
+# 第三章结束
 
-This chapter is incomplete. In the future it will contain advanced usage of `zig build`.
+本章未完。在未来，它将包含`zig build`”的高级用法。
 
-Feedback and PRs are welcome.
+欢迎反馈和PR。

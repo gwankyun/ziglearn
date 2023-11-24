@@ -94,60 +94,55 @@ pub fn main() void {
 ```zig
 const std = @import("std");
 
-// Although this function looks imperative, note that its job is to
-// declaratively construct a build graph that will be executed by an external
-// runner.
+// 尽管这个函数看起来是命令式的，但请注意，它的工作是声明将由外部运行程序
+// 执行构建图。
 pub fn build(b: *std.Build) void {
-    // Standard target options allows the person running `zig build` to choose
-    // what target to build for. Here we do not override the defaults, which
-    // means any target is allowed, and the default is native. Other options
-    // for restricting supported target set are available.
+    // 标准目标选项允许运行`zig build`的用户选择构建目标。
+    // 这里我们不覆盖默认值，这意味着任何目标都是允许的，默认值是本机的。
+    // 可以使用其他选项来限制受支持的目标集。
     const target = b.standardTargetOptions(.{});
 
-    // Standard optimization options allow the person running `zig build` to select
-    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
-    // set a preferred release mode, allowing the user to decide how to optimize.
+    // 标准优化选项允许运行`zig build`的用户在
+    // Debug、ReleaseSafe、ReleaseFast和ReleaseSmall之间选择。
+    // 这里我们不设置优先发布模式，让用户决定如何优化。
     const optimize = b.standardOptimizeOption(.{});
 
     const exe = b.addExecutable(.{
         .name = "tmp",
-        // In this case the main source file is merely a path, however, in more
-        // complicated build scripts, this could be a generated file.
+        // 在这种情况下，主源文件仅仅是一个路径。
+        // 然而，在更复杂的构建脚本中，这可能是一个生成的文件。
         .root_source_file = .{ .path = "src/main.zig" },
         .target = target,
         .optimize = optimize,
     });
 
-    // This declares intent for the executable to be installed into the
-    // standard location when the user invokes the "install" step (the default
-    // step when running `zig build`).
+    // 这声明了当用户调用“install”步骤（运行`zig build`时的默认步骤）时
+    // 将可执行文件安装到标准位置的意图。
     b.installArtifact(exe);
 
-    // This *creates* a Run step in the build graph, to be executed when another
-    // step is evaluated that depends on it. The next line below will establish
-    // such a dependency.
+    // 这在构建图中*创建*一个运行步骤，当评估依赖于它的另一个步骤时执行。
+    // 下面的下一行将建立这样一个依赖项。
     const run_cmd = b.addRunArtifact(exe);
 
-    // By making the run step depend on the install step, it will be run from the
-    // installation directory rather than directly from within the cache directory.
-    // This is not necessary, however, if the application depends on other installed
-    // files, this ensures they will be present and in the expected location.
+    // 通过使运行步骤依赖于安装步骤，它将从安装目录运行，
+    // 而不是直接从缓存目录中运行。这不是必需的，
+    // 但是，如果应用程序依赖于其他已安装的文件，
+    // 这将确保它们将存在并位于预期的位置。
     run_cmd.step.dependOn(b.getInstallStep());
 
-    // This allows the user to pass arguments to the application in the build
-    // command itself, like this: `zig build run -- arg1 arg2 etc`
+    // 这允许用户在构建命令中向应用程序传递参数，
+    // 像这样：`zig build run -- arg1 arg2 etc`
     if (b.args) |args| {
         run_cmd.addArgs(args);
     }
 
-    // This creates a build step. It will be visible in the `zig build --help` menu,
-    // and can be selected like this: `zig build run`
-    // This will evaluate the `run` step rather than the default, which is "install".
+    // 这将创建一个构建步骤，它将在`zig build --help`菜单中可见，
+    // 并且可以像这样选择：`zig build run`。这将评估`run`步骤，
+    // 而不是默认的“install”。
     const run_step = b.step("run", "Run the app");
     run_step.dependOn(&run_cmd.step);
 
-    // Creates a step for unit testing. This only builds the test executable
-    // but does not run it.
+    // 为单元测试创建一个步骤，这只构建测试可执行文件，但不运行它。
     const unit_tests = b.addTest(.{
         .root_source_file = .{ .path = "src/main.zig" },
         .target = target,
@@ -156,9 +151,8 @@ pub fn build(b: *std.Build) void {
 
     const run_unit_tests = b.addRunArtifact(unit_tests);
 
-    // Similar to creating the run step earlier, this exposes a `test` step to
-    // the `zig build --help` menu, providing a way for the user to request
-    // running the unit tests.
+    // 与前面创建运行步骤类似，这将`test`步骤暴露给`zig build --help`菜单，
+    // 为用户提供了一请求运行单元测试的方法。
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_unit_tests.step);
 }
@@ -171,24 +165,23 @@ pub fn build(b: *std.Build) void {
 const std = @import("std");
 
 pub fn main() !void {
-    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
+    // 打印到stderr（这是基于`std.io.getStdErr()`的快捷方式）
     std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
 
-    // stdout is for the actual output of your application, for example if you
-    // are implementing gzip, then only the compressed bytes should be sent to
-    // stdout, not any debugging messages.
+    // stdout用于应用程序的实际输出，例如，如果你正在实现gzip，
+    // 则只应将压缩字节发送到stdout，而不应发送任何调试消息。
     const stdout_file = std.io.getStdOut().writer();
     var bw = std.io.bufferedWriter(stdout_file);
     const stdout = bw.writer();
 
     try stdout.print("Run `zig build test` to run the tests.\n", .{});
 
-    try bw.flush(); // don't forget to flush!
+    try bw.flush(); // 别忘了刷新！
 }
 
 test "simple test" {
     var list = std.ArrayList(i32).init(std.testing.allocator);
-    defer list.deinit(); // try commenting this out and see if zig detects the memory leak!
+    defer list.deinit(); // 尝试将其注释，看看zig是否检测到内存泄露！
     try list.append(42);
     try std.testing.expectEqual(@as(i32, 42), list.pop());
 }
@@ -341,34 +334,34 @@ Zig的文档生成使用类似于注释的*文档注释*，使用`///`而不是`
 const std = @import("std");
 const w = std.os.windows;
 
-///**Opens a process**, giving you a handle to it. 
+///**打开进程**，返回它的句柄。
 ///[MSDN](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess)
 pub extern "kernel32" fn OpenProcess(
-    ///[The desired process access rights](https://docs.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights)
+    ///[所需的进程访问权限](https://docs.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights)
     dwDesiredAccess: w.DWORD,
     ///
     bInheritHandle: w.BOOL,
     dwProcessId: w.DWORD,
 ) callconv(w.WINAPI) ?w.HANDLE;
 
-///spreadsheet position
+///电子表格的位置
 pub const Pos = struct{
-    ///row
+    ///横行
     x: u32,
-    ///column
+    ///纵列
     y: u32,
 };
 
 pub const message = "hello!";
 
-//used to force analysis, as these things aren't otherwise referenced.
+//用于强制分析，因为这些东西不会被引用。
 comptime {
     _ = OpenProcess;
     _ = Pos;
     _ = message;
 }
 
-//Alternate method to force analysis of everything automatically, but only in a test build:
+//强制自动分析所有内容的另一种方法，但仅在测试构建中：
 test "Force analysis" {
     comptime {
         std.testing.refAllDecls(@This());
@@ -414,13 +407,13 @@ pub fn build(b: *std.build.Builder) void {
 const A = error{
     NotDir,
 
-    /// A doc comment
+    /// A文档注释
     PathNotFound,
 };
 const B = error{
     OutOfMemory,
 
-    /// B doc comment
+    /// B文档注释
     PathNotFound,
 };
 

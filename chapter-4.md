@@ -1,31 +1,31 @@
 ---
-title: "Chapter 4 - Working with C"
+title: "第四章 - 和C一起工作"
 weight: 5
 date: 2023-01-11 18:00:00
-description: "Chapter 4 - Learn about how the Zig programming language makes use of C code. This tutorial covers C data types, FFI, building with C, translate-c and more!"
+description: "第四章 - 了解Zig编程语言如何使用C代码。本教程涵盖C数据类型、FFI、用C构建、translate-c等！"
 ---
 
-Zig has been designed from the ground up with C interop as a first-class feature. In this section, we will go over how this works.
+Zig从一开始就以C互操作作为一流的特性来设计。在本节中，我们将讨论它是如何工作的。
 
 # ABI
 
-An ABI *(application binary interface)* is a standard, pertaining to:
+ABI *（应用程序二进制接口）* 是一种标准，涉及：
 
-- The in-memory layout of types (i.e. a type's size, alignment, offsets, and the layouts of its fields)
-- The in-linker naming of symbols (e.g. name mangling)
-- The calling conventions of functions (i.e. how a function call works at a binary level)
+- 类型在内存中的布局（即类型的大小、对齐方式、偏移量及其字段的布局）
+- 链接器中符号的命名（例如名称混淆）
+- 函数的调用约定（即函数调用如何在二进制级别工作）
 
-By defining these rules and not breaking them, an ABI is said to be stable, and this can be used to, for example, reliably link together multiple libraries, executables, or objects which were compiled separately (potentially on different machines or using different compilers). This allows for FFI *(foreign function interface)* to take place, where we can share code between programming languages.
+通过定义这些规则而不破坏它们，ABI就被认为是稳定的，这可以用于可靠地将单独编译的多个库、可执行文件或对象链接在一起(可能在不同的机器上或使用不同的编译器)。这允许FFI *（外部函数接口）* 产生，我们可以在编程语言之间共享代码。
 
-Zig natively supports C ABIs for `extern` things; which C ABI is used depends on the target you are compiling for (e.g. CPU architecture, operating system). This allows for near-seamless interoperation with code that was not written in Zig; the usage of C ABIs is standard amongst programming languages.
+Zig原生支持用于`extern`事物的C ABI；使用哪种C ABI取决于你要编译的目标（例如CPU架构，操作系统）。这允许与非Zig编写的代码进行近乎无缝的互操作；C ABI的使用是编程语言中的标准。
 
-Zig internally does not use an ABI, meaning code should explicitly conform to a C ABI where reproducible and defined binary-level behaviour is needed.
+Zig内部不使用ABI，这意味着代码应该显式地遵守C ABI，其中需要可复制和定义的二进制级行为。
 
-# C Primitive Types
+# C基本类型
 
-Zig provides special `c_` prefixed types for conforming to the C ABI. These do not have fixed sizes but rather change in size depending on the ABI being used.
+Zig为符合C ABI提供了特殊的以`c_`为前缀的类型。它们没有固定的大小，而是根据所使用的ABI而改变大小。
 
-| Type         | C Equivalent      | Minimum Size (bits) |
+| 类型         | C等效              | 最小尺寸（bits） |
 |--------------|-------------------|---------------------|
 | c_short      | short             | 16                  |
 | c_ushort     | unsigned short    | 16                  |
@@ -38,26 +38,26 @@ Zig provides special `c_` prefixed types for conforming to the C ABI. These do n
 | c_longdouble | long double       | N/A                 |
 | anyopaque    | void              | N/A                 |
 
-Note: C's void (and Zig's `anyopaque`) has an unknown non-zero size. Zig's `void` is a true zero-sized type.
+注意：C的void（和Zig的`anyopaque`）有一个未知的非零大小。Zig的`void`是一个真正的零大小类型。
 
-# Calling conventions
+# 调用约定
 
-Calling conventions describe how functions are called. This includes how arguments are supplied to the function (i.e. where they go - in registers or on the stack, and how), and how the return value is received.
+调用约定描述了如何调用函数。这包括如何向函数提供参数（即它们在寄存器中或堆栈上的位置，以及如何），以及如何接收返回值。
 
-In Zig, the attribute `callconv` may be given to a function. The calling conventions available may be found in [std.builtin.CallingConvention](https://ziglang.org/documentation/master/std/#A;std:builtin.CallingConvention). Here we make use of the cdecl calling convention.
+在Zig中，可以将属性`callconv`赋给函数。可用的调用约定可以在[std.builtin.CallingConvention](https://ziglang.org/documentation/master/std/#A;std:builtin.CallingConvention)中找到。这里我们使用cdecl调用约定。
 ```zig
 fn add(a: u32, b: u32) callconv(.C) u32 {
     return a + b;
 }
 ```
 
-Marking your functions with the C calling convention is crucial when you're calling Zig from C.
+当你从C调用Zig时，用C调用约定标记函数是至关重要的。
 
-# Extern Structs
+# 外部结构体
 
-Normal structs in Zig do not have a defined layout; `extern` structs are required for when you want the layout of your struct to match the layout of your C ABI.
+普通结构在Zig中没有定义的布局；当你想让结构体的布局与C ABI的布局相匹配时，需要`extern`结构体。
 
-Let's create an extern struct. This test should be run with `x86_64` with a `gnu` ABI, which can be done with `-target x86_64-native-gnu`.
+让我们创建一个外部结构体。这个测试应该使用带有`gnu` ABI的`x86_64`运行，可以使用`-target x86_64-native-gnu`来完成。
 
 ```zig
 const expect = @import("std").testing.expect;
@@ -82,34 +82,34 @@ test "hmm" {
 }
 ```
 
-This is what the memory inside our `x` value looks like.
+这就是`x`值里面的内存。
 
-| Field | a  | a  | a  | a  | b  |    |    |    | c  | c  | c  | c  | d  | e  |    |    |
+| 字段 | a  | a  | a  | a  | b  |    |    |    | c  | c  | c  | c  | d  | e  |    |    |
 |-------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
-| Bytes | 15 | 27 | 00 | 00 | 2A | 00 | 00 | 00 | 00 | 00 | 28 | C1 | 00 | 01 | 00 | 00 |
+| 字节 | 15 | 27 | 00 | 00 | 2A | 00 | 00 | 00 | 00 | 00 | 28 | C1 | 00 | 01 | 00 | 00 |
 
-Note how there are gaps in the middle and at the end - this is called "padding". The data in this padding is undefined memory, and won't always be zero.
+注意中间和末尾是如何有空隙的——这被称为“填充”。这个填充中的数据是未定义的内存，并不总是为零。
 
-As our `x` value is that of an extern struct, we could safely pass it into a C function expecting a `Data`, providing the C function was also compiled with the same `gnu` ABI and CPU arch.
+由于我们的`x`值是外部结构体的值，我们可以安全地将它传递给期望得到`Data`的C函数，前提是该C函数也使用相同的`gnu` ABI和CPU arch进行编译。
 
-# Alignment
+# 对齐
 
-For circuitry reasons, CPUs access primitive values at specific multiples in memory. This could mean, for example, that the address of an `f32` value must be a multiple of 4, meaning `f32` has an alignment of 4. This so-called "natural alignment" of primitive data types depends on CPU architecture. All alignments are powers of 2.
+由于电路的原因，CPU在内存中以特定的倍数访问原始值。这可能意味着，例如，`f32`值的地址必须是4的倍数，这意味着`f32`的对齐顺序为4。这种所谓的原始数据类型的“自然对齐”取决于CPU架构。所有对齐都是2的幂次。
 
-Data of a larger alignment also has the alignment of every smaller alignment; for example, a value which has an alignment of 16 also has an alignment of 8, 4, 2 and 1.
+较大对齐的数据也具有每个较小对齐的对齐；例如，对齐方式为16的值也具有8、4、2和1的对齐方式。
 
-We can make specially aligned data by using the `align(x)` property. Here we are making data with a greater alignment.
+我们可以使用`align(x)`属性制作特殊对齐的数据。在这里，我们以更大的一致性制作数据。
 ```zig
 const a1: u8 align(8) = 100;
 const a2 align(8) = @as(u8, 100);
 ```
-And making data with a lesser alignment. Note: Creating data of a lesser alignment isn't particularly useful.
+并以较小的对齐方式生成数据。注意：创建较小对齐的数据并不是特别有用。
 ```zig
 const b1: u64 align(1) = 100;
 const b2 align(1) = @as(u64, 100);
 ```
 
-Like `const`, `align` is also a property of pointers.
+和`const`一样，`align`也是指针的属性。
 ```zig
 test "aligned pointers" {
     const a: u32 align(8) = 5;
@@ -117,7 +117,7 @@ test "aligned pointers" {
 }
 ```
 
-Let's make use of a function expecting an aligned pointer.
+让我们利用一个需要对齐指针的函数。
 
 ```zig
 fn total(a: *align(64) const [64]u8) u32 {
@@ -132,11 +132,11 @@ test "passing aligned data" {
 }
 ```
 
-# Packed Structs
+# 打包结构体
 
-By default, all struct fields in Zig are naturally aligned to that of [`@alignOf(FieldType)`](https://ziglang.org/documentation/master/#alignOf) (the ABI size), but without a defined layout. Sometimes you may want to have struct fields with a defined layout that do not conform to your C ABI. `packed` structs allow you to have extremely precise control of your struct fields, allowing you to place your fields on a bit-by-bit basis.
+默认情况下，Zig中的所有结构字段都与[`@alignOf(FieldType)`](https://ziglang.org/documentation/master/#alignOf) （ABI大小）自然对齐，但没有定义布局。有时，你可能希望具有不符合你的C ABI的已定义布局的结构字段。`packed`结构体允许你对结构体字段进行极其精确的控制，允许你逐位放置字段。
 
-Inside packed structs, Zig's integers take their bit-width in space (i.e. a `u12` has an [`@bitSizeOf`](https://ziglang.org/documentation/master/#bitSizeOf) of 12, meaning it will take up 12 bits in the packed struct). Bools also take up 1 bit, meaning you can implement bit flags easily.
+在打包结构体中，Zig的整数在空间中取其位宽（例如，`u12`的[`@bitSizeOf`](https://ziglang.org/documentation/master/#bitSizeOf)为12，这意味着它将在打包结构体中占用12位）。bool也占用1位，这意味着你可以轻松实现位标志。
 
 ```zig
 const MovementState = packed struct {
@@ -159,9 +159,9 @@ test "packed struct size" {
 }
 ```
 
-# Bit Aligned Pointers
+# 位对齐指针
 
-Similar to aligned pointers, bit-aligned pointers have extra information in their type, which informs how to access the data. These are necessary when the data is not byte-aligned. Bit alignment information is often needed to address fields inside of packed structs.
+与对齐指针类似，位对齐指针在其类型中有额外的信息，这些信息告知如何访问数据。当数据不是按字节对齐时，这些是必需的。位对齐信息通常需要在打包结构体中寻址字段。
 
 ```zig
 test "bit aligned pointers" {
@@ -190,23 +190,23 @@ test "bit aligned pointers" {
 }
 ```
 
-# C Pointers
+# C指针
 
-Up until now, we have used the following kinds of pointers:
+到目前为止，我们已经使用了以下类型的指针：
 
-- single item pointers - `*T`
-- many item pointers - `[*]T`
-- slices - `[]T`
+- 单项指针 - `*T`
+- 多项指针 - `[*]T`
+- 切片 - `[]T`
 
-Unlike the aforementioned pointers, C pointers cannot deal with specially aligned data and may point to the address `0`. C pointers coerce back and forth between integers, and also coerce to single and multi item pointers. When a C pointer of value `0` is coerced to a non-optional pointer, this is detectable illegal behaviour.
+与前面提到的指针不同，C指针不能处理特殊对齐的数据，可能指向地址`0`。C指针在整数之间来回强制转换，也强制转换为单项和多项指针。当值为`0`的C指针被强制为非可选指针时，这是可检测到的非法行为。
 
-Outside of automatically translated C code, the usage of `[*c]` is almost always a bad idea, and should almost never be used.
+在自动翻译的C代码之外，使用`[*c]`几乎总是一个坏主意，几乎不应该使用。
 
 # Translate-C
 
-Zig provides the command `zig translate-c` for automatic translation from C source code.
+Zig提供了命令`zig translate-c`，用于从C源代码进行自动翻译。
 
-Create the file `main.c` with the following contents.
+用以下内容创建文件`main.c`。
 ```c
 #include <stddef.h>
 
@@ -222,48 +222,48 @@ void int_sort(int* array, size_t count) {
     }
 }
 ```
-Run the command `zig translate-c main.c` to get the equivalent Zig code output to your console (stdout). You may wish to pipe this into a file with `zig translate-c main.c > int_sort.zig` (warning for Windows users: piping in PowerShell will produce a file with the incorrect encoding - use your editor to correct this).
+运行命令`zig translate-c main.c`，将等效的Zig代码输出到控制台（stdout）。你可能希望使用`zig translate-c main.c > int_sort.zig`将其管道到一个文件中（警告Windows用户：PowerShell中的管道会生成一个编码不正确的文件——使用你的编辑器来纠正这个问题）。
 
-In another file you could use `@import("int_sort.zig")` to use this function.
+在另一个文件中，你可以使用`@import("int_sort.zig")`来使用此函数。
 
-Currently the code produced may be unnecessarily verbose, though translate-c successfully translates most C code into Zig. You may wish to use translate-c to produce Zig code before editing it into more idiomatic code; a gradual transfer from C to Zig within a codebase is a supported use case.
+目前生成的代码可能不必要地冗长，尽管translate-c成功地将大多数C代码转换为Zig。在将其编辑成更习惯的代码之前，你可能希望使用translate-c来生成Zig代码；在代码库中从C语言逐渐转换到Zig语言是一个受支持的用例。
 
 # cImport
 
-Zig's [`@cImport`](https://ziglang.org/documentation/master/#cImport) builtin is unique in that it takes in an expression, which can only take in [`@cInclude`](https://ziglang.org/documentation/master/#cInclude), [`@cDefine`](https://ziglang.org/documentation/master/#cDefine), and [`@cUndef`](https://ziglang.org/documentation/master/#cUndef). This works similarly to translate-c, translating C code to Zig under the hood.
+Zig的[`@cImport`](https://ziglang.org/documentation/master/#cImport)内置是唯一的，因为它接受一个表达式，这个表达式只能接受[`@cInclude`](https://ziglang.org/documentation/master/#cInclude)、[`@cDefine`](https://ziglang.org/documentation/master/#cDefine)和[`@cUndef`](https://ziglang.org/documentation/master/#cUndef)。这类似于translate-c，将C代码在底层翻译成Zig语言。
 
-[`@cInclude`](https://ziglang.org/documentation/master/#cInclude) takes in a path string and adds the path to the includes list.
+[`@cInclude`](https://ziglang.org/documentation/master/#cInclude)接受一个路径字符串，并将该路径添加到包含列表中。
 
-[`@cDefine`](https://ziglang.org/documentation/master/#cDefine) and [`@cUndef`](https://ziglang.org/documentation/master/#cUndef) define and undefine things for the import.
+[`@cDefine`](https://ziglang.org/documentation/master/#cDefine)和[`@cUndef`](https://ziglang.org/documentation/master/#cUndef)为导入定义和取消定义。
 
-These three functions work exactly as you'd expect them to work within C code.
+这三个函数的工作方式与你在C代码中期望的完全一样。
 
-Similar to [`@import`](https://ziglang.org/documentation/master/#import), this returns a struct type with declarations. It is typically recommended to only use one instance of [`@cImport`](https://ziglang.org/documentation/master/#cImport) in an application to avoid symbol collisions; the types generated within one cImport will not be equivalent to those generated in another.
+与[`@import`](https://ziglang.org/documentation/master/#import)类似，它返回一个带有声明的结构类型。通常建议在一个应用程序中只使用一个[`@cImport`](https://ziglang.org/documentation/master/#cImport)实例，以避免符号冲突；在一个cImport中生成的类型将不等同于在另一个cImport中生成的类型。
 
-cImport is only available when linking libc.
+cImport仅在链接libc时可用。
 
-# Linking libc
+# 连接libc
 
-Linking libc can be done via the command line via `-lc`, or via `build.zig` using `exe.linkLibC();`. The libc used is that of the compilation's target; Zig provides libc for many targets.
+链接libc可以通过命令行通过`-lc`或通过`build.zig`使用`exe.linkLibC();`来完成。使用的libc是编译目标的libc；Zig为许多目标提供libc。
 
-# Zig cc, Zig c++
+# Zig cc，Zig c++
 
-The Zig executable comes with Clang embedded inside it alongside libraries and headers required to cross-compile for other operating systems and architectures.
+Zig可执行文件中嵌入了Clang，以及为其他操作系统和体系结构交叉编译所需的库和头文件。
 
-This means that not only can `zig cc` and `zig c++` compile C and C++ code (with Clang-compatible arguments), but it can also do so while respecting Zig's target triple argument; the single Zig binary that you have installed has the power to compile for several different targets without the need to install multiple versions of the compiler or any addons. Using `zig cc` and `zig c++` also makes use of Zig's caching system to speed up your workflow.
+这意味着`zig cc`和`zig c++`不仅可以编译C和C++代码（使用与clang兼容的参数），而且还可以在尊重Zig的目标三重参数的情况下这样做；你安装的单个Zig二进制文件可以针对多个不同的目标进行编译，而无需安装多个版本的编译器或任何插件。使用`zig cc`和`zig c++`还可以利用Zig的缓存系统来加快你的工作流程。
 
-Using Zig, one can easily construct a cross-compiling toolchain for languages which make use of a C and/or C++ compiler.
+使用Zig，可以很容易地为使用C和/或C++编译器的语言构建一个交叉编译工具链。
 
-Some examples in the wild:
+野外的一些例子：
 
 - [Using zig cc to cross compile LuaJIT to aarch64-linux from x86_64-linux](https://andrewkelley.me/post/zig-cc-powerful-drop-in-replacement-gcc-clang.html)
 
 - [Using zig cc and zig c++ in combination with cgo to cross compile hugo from aarch64-macos to x86_64-linux, with full static linking](https://twitter.com/croloris/status/1349861344330330114)
 
-# End of Chapter 4
+# 第四章结束
 
-This chapter is incomplete. In the future, it will contain things such as:
-- Calling C code from Zig and vice versa
-- Using `zig build` with a mixture of C and Zig code
+本章未完。在未来，它将包含如下内容：
+- 从Zig调用C代码，反之亦然
+- 使用`zig build`与C和Zig代码的混合
 
-Feedback and PRs are welcome.
+欢迎反馈和PR。

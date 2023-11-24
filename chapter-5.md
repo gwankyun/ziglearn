@@ -1,38 +1,38 @@
 ---
-title: "Chapter 5 - Async"
+title: "第五章 - 异步"
 weight: 6
 date: 2023-04-28 18:00:00
-description: "Chapter 5 - Learn about how the ziglang's async works"
+description: "第五章 - 了解zig语言的异步是如何工作的"
 ---
 
-Warning: The Zig compiler's async support regressed while self hosting, and is not available in 0.11. This is due to change in 0.12.
+警告：Zig编译器的异步支持在自托管时回归，并且在0.11中不可用。这是由于0.12的变化。
 
-# Async
+# 异步
 
-A functioning understanding of Zig's async requires familiarity with the concept of the call stack. If you have not heard of this before, [check out the wikipedia page](https://en.wikipedia.org/wiki/Call_stack).
+要有效地理解Zig的异步，需要熟悉调用堆栈的概念。如果你以前没有听说过这个，请[查看维基百科页面](https://en.wikipedia.org/wiki/Call_stack)。
 
 <!-- TODO: actually explain the call stack? -->
 
-A traditional function call comprises of three things:
-1. Initiate the called function with its arguments, pushing the function's stack frame
-2. Transfer control to the function
-3. Upon function completion, hand control back to the caller, retrieving the function's return value and popping the function's stack frame
+传统的函数调用由三部分组成：
+1. 用它的参数初始化被调用的函数，推入函数的堆栈帧
+2. 将控制传递给函数
+3. 在函数完成后，将控制权交还给调用者，检索函数的返回值并弹出函数的堆栈帧
 
-With Zig's async functions we can do more than this, with the transfer of control being an ongoing two-way conversation (i.e. we can give control to the function and take it back multiple times). Because of this, special considerations must be made when calling a function in an async context; we can no longer push and pop the stack frame as normal (as the stack is volatile, and things "above" the current stack frame may be overwritten), instead explicitly storing the async function's frame. While most people won't make use of its full feature set, this style of async is useful for creating more powerful constructs such as event loops.
+使用Zig的异步函数，我们可以做得更多，因为控制权的转移是一个正在进行的双向对话（即，我们可以多次将控制权交给函数并将其收回）。因此，在异步上下文中调用函数时必须特别考虑；我们不能再像往常一样推送和弹出堆栈帧（因为堆栈是易失的，当前堆栈帧“上面”的东西可能会被覆盖），而是显式地存储异步函数的帧。虽然大多数人不会使用它的完整功能集，但这种风格的异步对于创建更强大的结构（如事件循环）很有用。
 
-The style of Zig's async may be described as suspendible stackless coroutines. Zig's async is very different to something like an OS thread which has a stack, and can only be suspended by the kernel. Furthermore, Zig's async is there to provide you with control flow structures and code generation; async does not imply parallelism or the usage of threads.
+Zig的异步风格可以被描述为可挂起的无堆栈协程。Zig的异步与有堆栈的操作系统线程非常不同，并且只能由内核挂起。此外，Zig的async为你提供控制流结构和代码生成；异步并不意味着并行性或线程的使用。
 
-# Suspend / Resume
+# 暂停（Suspend）/恢复（Resume）
 
-In the previous section we talked of how async functions can give control back to the caller, and how the async function can later take control back. This functionality is provided by the keywords [`suspend`, and `resume`](https://ziglang.org/documentation/master/#Suspend-and-Resume). When a function suspends, control flow returns to wherever it was last resumed; when a function is called via an `async` invocation, this is an implicit resume.
+在上一节中，我们讨论了async函数如何将控制权交还给调用者，以及async函数如何在稍后将控制权收回。该功能由关键字[`suspend`和`resume`](https://ziglang.org/documentation/master/#Suspend-and-Resume)提供。当函数挂起时，控制流返回到上次恢复的位置；当通过`async`调用调用函数时，这是隐式恢复。
 
-The comments in these examples indicate the order of execution. There are a few things to take in here:
-*  The `async` keyword is used to invoke functions in an async context.
-*  `async func()` returns the function's frame.
-*  We must store this frame.
-*  The `resume` keyword is used on the frame, whereas `suspend` is used from the called function.
+这些示例中的注释指示了执行的顺序。这里有几点需要注意：
+*  `async`关键字用于在异步上下文中调用函数。
+*  `async func()`返回函数的帧。
+*  我们必须存储这个帧。
+*  `resume`关键字用于帧，而`suspend`则用于被调用的函数。
 
-This example has a suspend, but no matching resume.
+这个例子有一个挂起，但没有匹配的恢复。
 ```zig
 const expect = @import("std").testing.expect;
 
@@ -47,11 +47,11 @@ test "suspend with no resume" {
 fn func() void {
     foo += 1;                 //2
     suspend {}                //3
-    foo += 1;                 //never reached!
+    foo += 1;                 //永不可达！
 }
 ```
 
-In well formed code, each suspend is matched with a resume.
+在格式良好的代码中，每个挂起都与一个恢复相匹配。
 
 ```zig
 var bar: i32 = 1;
@@ -71,9 +71,9 @@ fn func2() void {
 
 # Async / Await
 
-Similar to how well formed code has a suspend for every resume, each `async` function invocation with a return value must be matched with an `await`. The value yielded by `await` on the async frame corresponds to the function's return.
+与格式良好的代码对每个resume都有一个suspend类似，每个具有返回值的`async`函数调用都必须与`await`匹配。`await`在异步帧上产生的值对应于函数的返回值。
 
-You may notice that `func3` here is a normal function (i.e. it has no suspend points - it is not an async function). Despite this, `func3` can work as an async function when called from an async invocation; the calling convention of `func3` doesn't have to be changed to async - `func3` can be of any calling convention.
+你可能会注意到这里的`func3`是一个普通函数（也就是说，它没有挂起点——它不是一个async函数）。尽管如此，在异步调用中调用`func3`可以作为异步函数；`func3`的调用约定不必更改为async - `func3`可以是任何调用约定。
 
 ```zig
 fn func3() u32 {
@@ -86,11 +86,11 @@ test "async / await" {
 }
 ```
 
-Using `await` on an async frame of a function which may suspend is only possible from async functions. As such, functions that use `await` on the frame of an async function are also considered async functions. If you can be sure that the potential suspend doesn't happen, `nosuspend await` will stop this from happening.
+对可能挂起的函数的异步帧使用`await`只能在异步函数中使用。因此，在异步函数的框架上使用`await`的函数也被认为是异步函数。如果你可以确定潜在的挂起不会发生，`nosuspend await`将阻止它发生。
 
 # Nosuspend
 
-When calling a function which is determined to be async (i.e. it may suspend) without an `async` invocation, the function which called it is also treated as being async. When a function of a concrete (non-async) calling convention is determined to have suspend points, this is a compile error as async requires its own calling convention. This means, for example, that main cannot be async.
+当调用一个被确定为异步（即它可能挂起）的函数而没有`async`调用时，调用它的函数也被视为异步。当确定具有具体（非异步）调用约定的函数具有挂起点时，这是一个编译错误，因为异步需要自己的调用约定。这意味着，例如，main不能是异步的。
 
 <!--no_test-->
 ```zig
@@ -98,7 +98,7 @@ pub fn main() !void {
     suspend {}
 }
 ```
-(compiled from windows)
+（从windows编译）
 ```
 C:\zig\lib\zig\std\start.zig:165:1: error: function with calling convention 'Stdcall' cannot be async
 fn WinStartup() callconv(.Stdcall) noreturn {
@@ -117,7 +117,7 @@ C:\zig\lib\zig\std\start.zig:334:37: note: async function call here
     ^
 ```
 
-If you want to call an async function without using an `async` invocation, and without the caller of the function also being async, the `nosuspend` keyword comes in handy. This allows the caller of the async function to not also be async, by asserting that the potential suspends do not happen.
+如果你希望在不使用`async`调用的情况下调用异步函数，并且该函数的调用方也不是异步的，那么`nosuspend`关键字就派上了用场。通过断言潜在的挂起不会发生，这允许async函数的调用者也不是异步的。
 
 <!--no_test-->
 ```zig
@@ -140,7 +140,7 @@ pub fn main() !void {
 }
 ```
 
-In the above code if we change the value of `ticker` to be above 0, this is detectable illegal behaviour. If we run that code, we will have an error like this in safe build modes. Similar to other illegal behaviours in Zig, having these happen in unsafe modes will result in undefined behaviour.
+在上面的代码中，如果我们将`ticker`的值更改为0以上，这是可检测到的非法行为。如果我们运行该代码，在安全构建模式下就会出现这样的错误。与Zig中的其他非法行为类似，在不安全模式下发生这些行为将导致未定义行为。
 
 ```
 async function called in nosuspend scope suspended
@@ -152,9 +152,9 @@ C:\zig\lib\zig\std\start.zig:173:65: 0x7ff661dd18ce in std.start.WinStartup (mai
                                                                 ^
 ```
 
-# Async Frames, Suspend Blocks
+# 异步帧、挂起块
 
-`@Frame(function)` returns the frame type of the function. This works for async functions, and functions without a specific calling convention.
+`@Frame(function)`返回函数的帧类型。这适用于异步函数和没有特定调用约定的函数。
 
 ```zig
 fn add(a: i32, b: i32) i64 {
@@ -167,9 +167,9 @@ test "@Frame" {
 }
 ```
 
-[`@frame()`](https://ziglang.org/documentation/master/#frame) returns a pointer to the frame of the current function. Similar to `suspend` points, if this call is found in a function then it is inferred as being async. All pointers to frames coerce to the special type `anyframe`, which you can use `resume` upon.
+[`@frame()`](https://ziglang.org/documentation/master/#frame)返回一个指向当前函数帧的指针。与`suspend`点类似，如果在函数中找到此调用，则推断它是异步的。所有指向帧的指针都强制转换为特殊类型`anyframe`，你可以在此基础上使用`resume`。
 
-This allows us to, for example, write a function that resumes itself.
+例如，这允许我们编写一个恢复自身的函数。
 ```zig
 fn double(value: u8) u9 {
     suspend {
@@ -184,7 +184,7 @@ test "@frame 1" {
 }
 ```
 
-Or, more interestingly, we can use it to tell other functions to resume us. Here we're introducing **suspend blocks**. Upon entering a suspend block, the async function is already considered suspended (i.e. it can be resumed). This means that we can have our function resumed by something other than the last resumer.
+或者，更有趣的是，我们可以用它来告诉其他函数恢复我们。这里我们引入**挂起块**。当进入一个挂起块时，async函数已经被认为挂起了（即它可以被恢复）。这意味着我们可以使用除上次恢复程序之外的其他程序来恢复函数。
 
 ```zig
 const std = @import("std");
@@ -210,9 +210,9 @@ test "@frame 2" {
 }
 ```
 
-Using the `anyframe` data type can be thought of as a kind of type erasure, in that we are no longer sure of the concrete type of the function or the function frame. This is useful as it still allows us to resume the frame - in a lot of code we will not care about the details and will just want to resume it. This gives us a single concrete type which we can use for our async logic.
+使用`anyframe`数据类型可以被认为是一种类型擦除，因为我们不再确定函数或函数帧的具体类型。这是有用的，因为它仍然允许我们恢复帧——在许多代码中，我们不会关心细节，只会想要恢复它。这给了我们一个可以用于异步逻辑的具体类型。
 
-The natural drawback of `anyframe` is that we have lost type information, and we no longer know what the return type of the function is. This means we cannot await an `anyframe`. Zig's solution to this is the `anyframe->T` types, where the `T` is the return type of the frame.
+`anyframe`的自然缺点是我们丢失了类型信息，并且我们不再知道函数的返回类型是什么。这意味着我们不能await一个`anyframe`。Zig对此的解决方案是`anyframe->T`类型，其中`T`是帧的返回类型。
 
 ```zig
 fn zero(comptime x: anytype) x {
@@ -229,11 +229,11 @@ test "anyframe->T" {
 }
 ```
 
-# Basic Event Loop Implementation
+# 基本事件循环实现
 
-An event loop is a design pattern in which events are dispatched and/or waited upon. This will mean some kind of service or runtime that resumes suspended async frames when conditions are met. This is the most powerful and useful use case of Zig's async.
+事件循环是一种设计模式，在这种模式中，事件被分派和/或等待。这将意味着在满足条件时恢复挂起的异步帧的某种服务或运行时。这是Zig异步功能最强大、最有用的用例。
 
-Here we will implement a basic event loop. This one will allow us to submit tasks to be executed in a given amount of time. We will use this to submit pairs of tasks which will print the time since the program's start. Here is an example of the output.
+这里我们将实现一个基本的事件循环。这将允许我们在给定的时间内提交要执行的任务。我们将使用它来提交成对的任务，这些任务将打印程序开始以来的时间。下面是输出的一个示例。
 
 ```
 [task-pair b] it is now 499 ms since start!
@@ -242,13 +242,13 @@ Here we will implement a basic event loop. This one will allow us to submit task
 [task-pair a] it is now 2201 ms since start!
 ```
 
-Here is the implementation.
+这里是实现。
 
 <!--no_test-->
 ```zig
 const std = @import("std");
 
-// used to get monotonic time, as opposed to wall-clock time
+// 用来获取单调时间，而不是时钟时间
 var timer: ?std.time.Timer = null;
 fn nanotime() u64 {
     if (timer == null) {
@@ -257,14 +257,13 @@ fn nanotime() u64 {
     return timer.?.read();
 }
 
-// holds the frame, and the nanotime of
-// when the frame should be resumed
+// 保存帧，以及何时恢复帧的纳时
 const Delay = struct {
     frame: anyframe,
     expires: u64,
 };
 
-// suspend the caller, to be resumed later by the event loop
+// 挂起调用者，稍后由操作循环恢复
 fn waitForTime(time_ms: u64) void {
     suspend timer_queue.add(Delay{
         .frame = @frame(),
@@ -279,14 +278,14 @@ fn waitUntilAndPrint(
 ) void {
     const start = nanotime();
 
-    // suspend self, to be woken up when time1 has passed
+    // 挂起自己，当time1过去时被唤醒
     waitForTime(time1);
     std.debug.print(
         "[{s}] it is now {} ms since start!\n",
         .{ name, (nanotime() - start) / std.time.ns_per_ms },
     );
 
-    // suspend self, to be woken up when time2 has passed
+    // 挂起自己，当time2过去时被唤醒
     waitForTime(time2);
     std.debug.print(
         "[{s}] it is now {} ms since start!\n",
@@ -295,18 +294,17 @@ fn waitUntilAndPrint(
 }
 
 fn asyncMain() void {
-    // stores the async frames of our tasks
+    // 存储任务的异步帧
     var tasks = [_]@Frame(waitUntilAndPrint){
         async waitUntilAndPrint(1000, 1200, "task-pair a"),
         async waitUntilAndPrint(500, 1300, "task-pair b"),
     };
-    // |*t| is used, as |t| would be a *const @Frame(...)
-    // which cannot be awaited upon
+    // 使用|*t|，因为|t|将是一个不能等待的*const @Frame(...)
     for (tasks) |*t| await t;
 }
 
-// priority queue of tasks
-// lower .expires => higher priority => to be executed before
+// 任务优先级队列
+// 较低的.expires => 高优先级 => 待执行的任务队列
 var timer_queue: std.PriorityQueue(Delay, void, cmp) = undefined;
 fn cmp(context: void, a: Delay, b: Delay) std.math.Order {
     _ = context;
@@ -321,15 +319,14 @@ pub fn main() !void {
 
     var main_task = async asyncMain();
 
-    // the body of the event loop
-    // pops the task which is to be next executed
+    // 事件循环体弹出下一个要执行的任务
     while (timer_queue.removeOrNull()) |delay| {
-        // wait until it is time to execute next task
+        // 等到执行下一个任务的时间到了
         const now = nanotime();
         if (now < delay.expires) {
             std.time.sleep(delay.expires - now);
         }
-        // execute next task
+        // 执行下一个任务
         resume delay.frame;
     }
 
@@ -337,8 +334,8 @@ pub fn main() !void {
 }
 ```
 
-# End of Chapter 5
+# 第五章结束
 
-This chapter is incomplete and in future should contain usage of [`std.event.Loop`](https://ziglang.org/documentation/master/std/#std;event.Loop), and evented IO.
+本章未完，将来应该包含[`std.event.Loop`](https://ziglang.org/documentation/master/std/#std;event.Loop)和事件IO的用法。
 
-Feedback and PRs are welcome.
+欢迎反馈和PR。

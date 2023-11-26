@@ -78,4 +78,4 @@ pub fn main() void {
 ```
 ###### （注意：确保你的文件使用空格缩进、LF换行符及以UTF-8编码！）
 
-使用`zig run main.zig`来构建和运行它。在这个例子中，`Hello, World!` 将被写入stderr，并假定永远不会失败。
+使用`zig run main.zig`来构建和运行它。在这个例子中，`Hello, World!`将被写入stderr，并假定永远不会失败。

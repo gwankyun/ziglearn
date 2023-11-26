@@ -53,7 +53,7 @@ const array = [_]u8{ 'h', 'e', 'l', 'l', 'o' };
 const length = array.len; // 5
 ```
 
-# If
+# if
 
 Zig的if语句只接受`bool`值（即`true`或`false`）。没有类真值或类假值的概念。
 
@@ -74,7 +74,7 @@ test "if statement" {
 }
 ```
 
-If语句也可以作为表达式使用。
+if语句也可以作为表达式使用。
 
 ```zig
 test "if statement expression" {
@@ -140,8 +140,8 @@ test "while with break" {
 }
 ```
 
-# For
-For循环用于遍历数组（以及后面将讨论的其他类型）。For循环遵循这种语法。和while一样，for循环也可以使用`break`和`continue`。这里，我们必须给`_`赋值，因为Zig不允许我们使用未使用的值。
+# for
+for循环用于遍历数组（以及后面将讨论的其他类型）。for循环遵循这种语法。和while一样，for循环也可以使用`break`和`continue`。这里，我们必须给`_`赋值，因为Zig不允许我们使用未使用的值。
 
 ```zig
 test "for" {
@@ -527,7 +527,7 @@ test "usize" {
 
 # 切片
 
-切片可以被认为是一对`[*]T`（指向数据的指针）和一个`usize`（元素计数）。它们的语法是`[]T`，其中`T`是子类型。在整个Zig中，当你需要对任意数量的数据进行操作时，会大量使用切片。切片具有与指针相同的属性，这意味着也存在const切片。For循环也对切片进行操作。Zig格式的字符串强制转换为`[]const u8`。
+切片可以被认为是一对`[*]T`（指向数据的指针）和一个`usize`（元素计数）。它们的语法是`[]T`，其中`T`是子类型。在整个Zig中，当你需要对任意数量的数据进行操作时，会大量使用切片。切片具有与指针相同的属性，这意味着也存在const切片。for循环也对切片进行操作。Zig格式的字符串强制转换为`[]const u8`。
 
 这里，语法`x[n..m]`用于从数组中创建切片。这被称为 __切片__，并创建一个从`x[n]`开始到`x[m - 1]`结束的元素切片。本例使用const切片，因为切片点指向的值不需要修改。
 
@@ -1247,7 +1247,7 @@ test "while error union capture" {
 }
 ```
 
-For循环。
+for循环。
 ```zig
 test "for capture" {
     const x = [_]i8{ 1, 5, 120, -5 };

@@ -85,11 +85,11 @@ test "if statement expression" {
 }
 ```
 
-# While
+# while
 
 Zig的while循环有三个部分——一个条件、一个块和一个继续表达式。
 
-没有continue表达式。
+没有继续表达式。
 ```zig
 test "while" {
     var i: u8 = 2;
@@ -100,7 +100,7 @@ test "while" {
 }
 ```
 
-带一个continue表达式。
+带一个继续表达式。
 ```zig
 test "while with continue expression" {
     var sum: u8 = 0;
@@ -203,9 +203,9 @@ test "function recursion" {
 _ = 10;
 ```
 
-# Defer
+# defer
 
-Defer用于在退出当前块时执行语句。
+defer用于在退出当前块时执行语句。
 
 ```zig
 test "defer" {
@@ -231,7 +231,7 @@ test "multi defer" {
 }
 ```
 
-# Errors
+# 错误
 
 错误集类似于枚举（稍后详细介绍Zig的枚举），其中集合中的每个错误都是一个值。Zig中没有异常；错误就是值。让我们创建一个错误集。
 
@@ -345,7 +345,7 @@ const C = A || B;
 
 `anyerror`是全局错误集，由于它是所有错误集的超集，因此可以将任何集合的错误强制转换到它。一般应该避免使用它。
 
-# Switch
+# switch
 
 Zig的`switch`既可以作为语句，也可以作为表达式。所有分支的类型必须强制转换为正在切换的类型。所有可能的值都必须有关联的分支——不能遗漏值。情况不能转到其他分支。
 
@@ -418,7 +418,7 @@ test "out of bounds, no safety" {
 
 对于某些构建模式（稍后讨论），安全性是关闭的。
 
-# Unreachable
+# unreachable
 
 [`unreachable`](https://ziglang.org/documentation/master/#unreachable)是对编译器的一个断言，即无法到达该语句。它可以告诉编译器一个分支是不可能的，然后优化器可以利用它。到达一个[`unreachable`](https://ziglang.org/documentation/master/#unreachable)的地方是明显的非法行为。
 
@@ -1009,7 +1009,7 @@ test "while null capture" {
 
 这就是Zig中的空指针的工作方式——在解引用之前，它们必须被解包装为非可选的，这可以防止空指针解引用意外发生。
 
-# Comptime
+# comptime
 
 代码块可以在编译时使用[`comptime`](https://ziglang.org/documentation/master/#comptime)关键字强制执行。在这个例子中，变量x和y是等价的。
 
@@ -1541,7 +1541,7 @@ const arr: [4]f32 = @Vector(4, f32){ 1, 2, 3, 4 };
 
 值得注意的是，如果你没有做出正确的决定，使用显式向量可能会导致软件速度变慢——编译器的自动矢量化是相当聪明的。
 
-# Imports
+# import
 
 内置函数[`@import`](https://ziglang.org/documentation/master/#import)接受一个文件，并基于该文件为你提供一个结构类型。所有标记为`pub`（表示public）的声明都将在此结构类型中结束，以备使用。
 

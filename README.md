@@ -1,8 +1,9 @@
-# ziglearn
+# zig.guide
 
-Repo for https://ziglearn.org content. Feedback and PRs welcome.
+Repo for https://zig.guide content. Feedback and PRs welcome.
 
-## How to run the tests
+## Testing
 
-1. `zig run test-out.zig`
-2. `zig test do_tests.zig`
+```bash
+zig build test
+```
